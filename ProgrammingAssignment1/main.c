@@ -6,22 +6,7 @@
 
 #include <stdio.h>
 
-#define MAX_PROCESSES 1024
-
-enum error {
-    ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED
-};
-
-enum algorithm {
-    ALG_FCFS, ALG_P_SHORTEST, ALG_RROBIN
-};
-
-typedef struct process {
-    int id;
-    char name[100];
-    int sleep;
-    int burst;
-} process;
+#include "processors.h"
 
 int main(int argc, char **argv)
 {
