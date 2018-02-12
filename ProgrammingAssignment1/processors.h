@@ -22,5 +22,6 @@ void runFCFS(FILE *ofp, process *processes, int numProcesses, int runfor);
 void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int runfor);
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum);
 void printStatusLine(FILE *ofp, int time, process p, int burst, char *state);
+void printFooter(FILE *ofp, int time, process processes[], int numProcesses);
 
 #endif
