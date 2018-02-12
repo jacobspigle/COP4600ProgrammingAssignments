@@ -20,7 +20,7 @@ typedef struct process {
 
 void runFCFS(FILE *ofp, process *processes, int numProcesses);
 void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses);
-void runRoundRobin(FILE *ofp, process *processes, int numProcesses);
+void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int quantum);
 void printStatusLine(FILE *ofp, int time, process p, int burst, char *state);
 
 #endif

@@ -63,13 +63,13 @@ int main(int argc, char **argv)
 
     fprintf(ofp, "\n");
 
-    runProcessor(ofp, processes, numProcesses, alg);
+    runProcessor(ofp, processes, numProcesses, alg, quantum);
 
     fclose(fp);
     fclose(ofp);
 }
 
-void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg)
+void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg, int quantum)
 {
     switch(alg)
     {
@@ -82,7 +82,7 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg)
             break;
             
         case ALG_RROBIN:
-            runRoundRobin(ofp, processes, numProcesses);
+            runRoundRobin(ofp, processes, numProcesses, quantum);
             break;
             
         default:
