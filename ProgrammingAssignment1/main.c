@@ -6,9 +6,22 @@
 
 #include <stdio.h>
 
-#include "processors.h"
-
 #define MAX_PROCESSES 1024
+
+enum error {
+    ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED
+};
+
+enum algorithm {
+    ALG_FCFS, ALG_P_SHORTEST, ALG_RROBIN
+};
+
+typedef struct process {
+    int id;
+    char name[100];
+    int sleep;
+    int burst;
+} process;
 
 int main(int argc, char **argv)
 {
@@ -61,7 +74,7 @@ int main(int argc, char **argv)
         fprintf(ofp, "Quantum %d\n", quantum);
     }
 
-    fprintf(ofp, "\n");
+    fprintf(ofp, "\n\n");
 
     runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
@@ -131,8 +144,9 @@ void printAlgLine(FILE *fp, int alg)
     fprintf(fp, "\n");
 }
 
+//call this function inside ****.c
 //takes current tick (time), the processName, the burst of that process, and what state the process is in.
-void printStatusLine(FILE *ofp, int time, process p, int burst, char *state)
+void printStatusLine(FILE *ofp, int time, process p, char *state)
 {
     fprintf(ofp, "Time %d:", time);
 
@@ -142,17 +156,29 @@ void printStatusLine(FILE *ofp, int time, process p, int burst, char *state)
 
         if (strncmp(state, "arrived") == 0)
         {
-            fprintf(ofp, " arrived");
+            fprintf(ofp, " arrived\n");
         }
         else if (strncmp(state, "selected") == 0)
         {
-            fprintf(ofp, " selected (burst %d)", burst);
+            fprintf(ofp, " selected (burst %d)\n", p.burst);
         }
         else if (strncmp(state, "finished") == 0)
         {
-            fprintf(ofp, " finished");
+            fprintf(ofp, " finished\n");
         }
     }
     else
-        fprintf(ofp, "Idle");
+        fprintf(ofp, "Idle\n");
+}
+
+//call this function inside ****.c
+//output 'finished' time and turnaround time for each process
+void printFooter(FILE *ofp, int time, process processes[], int numProcesses)
+{
+    fprintf(ofp, "Finished at time %d\n\n", time);
+
+    for (int i = 0; i < numProcesses; i++)
+    {
+        fprintf(ofp, "%s wait %d turnaround %d\n", processes[i].name, processes[i].sleep, (processes[i].burst + processes[i].sleep));
+    }
 }
