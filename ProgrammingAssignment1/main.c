@@ -156,3 +156,29 @@ void printAlgLine(FILE *fp, int alg)
 
     fprintf(fp, "\n");
 }
+
+//takes current tick (time), the processName, the burst of that process, and what state the process is in.
+void printStatusLine(FILE *ofp, int time, process p, int burst, char *state)
+{
+    fprintf(ofp, "Time %d:", time);
+
+    if (strncmp(state, "idle"))
+    {
+        fprintf(ofp, p.name);
+
+        if (strncmp(state, "arrived") == 0)
+        {
+            fprintf(ofp, " arrived");
+        }
+        else if (strncmp(state, "selected") == 0)
+        {
+            fprintf(ofp, " selected (burst %d)", burst);
+        }
+        else if (strncmp(state, "finished") == 0)
+        {
+            fprintf(ofp, " finished");
+        }
+    }
+    else
+        fprintf(ofp, "Idle");
+}
