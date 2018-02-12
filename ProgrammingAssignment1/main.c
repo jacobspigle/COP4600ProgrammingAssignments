@@ -6,22 +6,9 @@
 
 #include <stdio.h>
 
+#include "processors.h"
+
 #define MAX_PROCESSES 1024
-
-enum error {
-    ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED
-};
-
-enum algorithm {
-    ALG_FCFS, ALG_P_SHORTEST, ALG_RROBIN
-};
-
-typedef struct process {
-    int id;
-    char name[100];
-    int sleep;
-    int burst;
-} process;
 
 int main(int argc, char **argv)
 {
@@ -78,6 +65,8 @@ int main(int argc, char **argv)
 
     runProcessor(ofp, processes, numProcesses, alg);
 
+    runProcessor(ofp, processes, numProcesses, alg);
+
     fclose(fp);
     fclose(ofp);
 }
@@ -87,35 +76,20 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg)
     switch(alg)
     {
         case ALG_FCFS:
-            runFCFS(processes, numProcesses);
+            runFCFS(ofp, processes, numProcesses);
             break;
             
         case ALG_P_SHORTEST:
-            runShortestJobFirst(processes, numProcesses);
+            runShortestJobFirst(ofp, processes, numProcesses);
             break;
             
         case ALG_RROBIN:
-            runRoundRobin(processes, numProcesses);
+            runRoundRobin(ofp, processes, numProcesses);
             break;
             
         default:
             fprintf(stderr, "Invalid algorithm code.\n");
     }
-}
-
-void runFCFS(process *processes, int numProcesses)
-{
-
-}
-
-void runShortestJobFirst(process *processes, int numProcesses)
-{
-
-}
-
-void runRoundRobin(process *processes, int numProcesses)
-{
-
 }
 
 int stringToAlg(char *str)
