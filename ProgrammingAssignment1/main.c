@@ -6,9 +6,22 @@
 
 #include <stdio.h>
 
-#include "processors.h"
-
 #define MAX_PROCESSES 1024
+
+enum error {
+    ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED
+};
+
+enum algorithm {
+    ALG_FCFS, ALG_P_SHORTEST, ALG_RROBIN
+};
+
+typedef struct process {
+    int id;
+    char name[100];
+    int sleep;
+    int burst;
+} process;
 
 int main(int argc, char **argv)
 {
@@ -65,8 +78,6 @@ int main(int argc, char **argv)
 
     runProcessor(ofp, processes, numProcesses, alg);
 
-    runProcessor(ofp, processes, numProcesses, alg);
-
     fclose(fp);
     fclose(ofp);
 }
@@ -76,15 +87,15 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg)
     switch(alg)
     {
         case ALG_FCFS:
-            runFCFS(ofp, processes, numProcesses);
+            runFCFS(processes, numProcesses);
             break;
             
         case ALG_P_SHORTEST:
-            runShortestJobFirst(ofp, processes, numProcesses);
+            runShortestJobFirst(processes, numProcesses);
             break;
             
         case ALG_RROBIN:
-            runRoundRobin(ofp, processes, numProcesses);
+            runRoundRobin(processes, numProcesses);
             break;
             
         default:
@@ -135,7 +146,7 @@ void printAlgLine(FILE *fp, int alg)
 
 //call this function inside ****.c
 //takes current tick (time), the processName, the burst of that process, and what state the process is in.
-void printStatusLine(FILE *ofp, int time, process p, int burst, char *state)
+void printStatusLine(FILE *ofp, int time, process p, char *state)
 {
     fprintf(ofp, "Time %d:", time);
 
@@ -149,7 +160,7 @@ void printStatusLine(FILE *ofp, int time, process p, int burst, char *state)
         }
         else if (strncmp(state, "selected") == 0)
         {
-            fprintf(ofp, " selected (burst %d)\n", burst);
+            fprintf(ofp, " selected (burst %d)\n", p.burst);
         }
         else if (strncmp(state, "finished") == 0)
         {
