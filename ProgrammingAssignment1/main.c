@@ -182,3 +182,22 @@ void printFooter(FILE *ofp, int time, process processes[], int numProcesses)
         fprintf(ofp, "%s wait %d turnaround %d\n", processes[i].name, processes[i].sleep, (processes[i].burst + processes[i].sleep));
     }
 }
+
+void sortByArrivalTime(process *processes, int numProcesses)
+{
+    // bubble sort
+    for(int i=0; i<numProcesses; i++) {
+        for(int j=0; j<numProcesses-i-1; j++) {
+            int prevSleep = processes[j].sleep;
+            int nextSleep = processes[j+1].sleep;
+
+            // sort identical arrival times by ascending id
+            if(prevSleep > nextSleep || (prevSleep == nextSleep && processes[j].id > processes[j+1].id)) {
+                // swap
+                process temp = processes[j];
+                processes[j] = processes[j+1];
+                processes[j+1] = temp;
+            }
+        }
+    }
+}
