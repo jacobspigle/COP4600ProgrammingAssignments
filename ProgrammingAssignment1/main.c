@@ -63,26 +63,26 @@ int main(int argc, char **argv)
 
     fprintf(ofp, "\n");
 
-    runProcessor(ofp, processes, numProcesses, alg, quantum);
+    runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
     fclose(fp);
     fclose(ofp);
 }
 
-void runProcessor(FILE *ofp, process *processes, int numProcesses, int alg, int quantum)
+void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum)
 {
     switch(alg)
     {
         case ALG_FCFS:
-            runFCFS(ofp, processes, numProcesses);
+            runFCFS(ofp, processes, numProcesses, runfor);
             break;
             
         case ALG_P_SHORTEST:
-            runShortestJobFirst(ofp, processes, numProcesses);
+            runShortestJobFirst(ofp, processes, numProcesses, runfor);
             break;
             
         case ALG_RROBIN:
-            runRoundRobin(ofp, processes, numProcesses, quantum);
+            runRoundRobin(ofp, processes, numProcesses, runfor, quantum);
             break;
             
         default:
