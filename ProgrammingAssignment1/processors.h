@@ -1,6 +1,8 @@
 #ifndef _PROCESSORS_H_
 #define _PROCESSORS_H_
 
+#include <stdio.h>
+
 enum error {
     ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED
 };
