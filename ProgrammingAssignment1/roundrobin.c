@@ -45,24 +45,39 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     for(int timer=0; timer<runfor; timer++) {
         while(processIndex < numProcesses && processes[processIndex].sleep == timer) {
             processes[processIndex].lastTimeCheck = timer;
+            printStatusLine(ofp, timer, &processes[processIndex], "arrived");
             enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
 
-        if(timer % quantum == 0) {
+        bool processComplete = currentProcess->burst == 0;
+        if(processComplete) {
+            printStatusLine(ofp, timer, currentProcess, "finished");
+        }
+
+        if(processComplete || timer % quantum == 0) {
             turnaroundTimes[currentProcess->id] += (timer - currentProcess->lastTimeCheck);
             currentProcess->lastTimeCheck = timer;
-            enqueue(&q, currentProcess);
+
+            // if the process has more burst, queue it back up
+            if(!processComplete) {
+                enqueue(&q, currentProcess);
+            }
 
             // get next process and see if this is its first time running
             currentProcess = dequeue(&q);
+            printStatusLine(ofp, timer, currentProcess, "selected");
         }
 
         if(currentProcess == NULL) {
-            fprintf(ofp, "Time %d: Idle\n", timer);
+            printStatusLine(ofp, timer, currentProcess, "idle");
         }
         else {
-            fprintf(ofp, "Time %d: %s arrived\n", timer, currentProcess->name);
+            printStatusLine(ofp, timer, currentProcess, "selected");
         }
+    }
+
+    for(int i=0; i<numProcesses; i++) {
+        
     }
 }
