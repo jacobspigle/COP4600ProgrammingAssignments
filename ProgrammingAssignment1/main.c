@@ -142,7 +142,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
 
     if (strcmp(state, "idle"))
     {
-        fprintf(ofp, p.name);
+        fprintf(ofp, p->name);
 
         if (strcmp(state, "arrived") == 0)
         {
@@ -150,7 +150,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
         }
         else if (strcmp(state, "selected") == 0)
         {
-            fprintf(ofp, " selected (burst %d)\n", p.burst);
+            fprintf(ofp, " selected (burst %d)\n", p->burst);
         }
         else if (strcmp(state, "finished") == 0)
         {
