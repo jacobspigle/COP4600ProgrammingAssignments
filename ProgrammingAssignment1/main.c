@@ -33,26 +33,26 @@ int main(int argc, char **argv)
     int alg;
     int quantum;
 
-    fscanf(fp, "processcount %d[^\n]*\n", &numProcesses);
+    fscanf(fp, "processcount %d%[^\n]*\n", &numProcesses);
 
     if(numProcesses > MAX_PROCESSES) {
         fprintf(stderr, "Maximum number of processes exceeded.\n");
         return ERR_MAX_PROCESSES_EXCEEDED;
     }
 
-    fscanf(fp, "\\S*runfor %d[^\n]*\n", &runfor);
+    fscanf(fp, "\\S*runfor %d%[^\n]*\n", &runfor);
 
     char algString[100];
-    fscanf(fp, "\\S*use %s[^\n]*\n", algString);
+    fscanf(fp, "\\S*use %s%[^\n]*\n", algString);
     alg = stringToAlg(algString);
 
     if(alg == ALG_RROBIN) {
-        fscanf(fp, "\\S*quantum %d[^\n]*\n", quantum);
+        fscanf(fp, "\\S*quantum %d%[^\n]*\n", quantum);
     }
 
     for(int i=0; i<numProcesses; i++) {
         processes[i].id = i;
-        fscanf(fp, "\\S*process name %s arrival %d burst %d[^\n]*\n",
+        fscanf(fp, "\\S*process name %s arrival %d burst %d%[^\n]*\n",
                         processes[i].name, processes[i].sleep, processes[i].burst);
     }
     
