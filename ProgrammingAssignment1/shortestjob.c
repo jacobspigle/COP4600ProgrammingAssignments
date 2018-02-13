@@ -15,7 +15,7 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
             //notify if process has arrived
             if (processes[i].sleep == tick)
             {
-                printStatusLine(ofp, tick, &processes[i], "arrived");
+                printStatusLine(ofp, tick, processes[i], "arrived");
             }
 
             //only if processes[i] still has > 0 burst AND is smaller than shortestBurst process
@@ -26,7 +26,7 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
         }
 
         //select process with shortest burst
-        printStatusLine(ofp, tick, shortestBurst, "selected");
+        printStatusLine(ofp, tick, *shortestBurst, "selected");
         
         //decrement burst count
         shortestBurst->burst--;
@@ -34,7 +34,7 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
         //process is finished if burst is now 0
         if (shortestBurst->burst == 0)
         {
-            printStatusLine(ofp, ++tick, shortestBurst, "finished");
+            printStatusLine(ofp, ++tick, *shortestBurst, "finished");
         }
         
         //increment tick

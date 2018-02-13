@@ -95,10 +95,11 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
 
 int stringToAlg(char *str)
 {
+
     if(strcmp(str, "fcfs") == 0) {
         return ALG_FCFS;
     }
-    else if(strcmp(str, "sjf")) {
+    else if(strcmp(str, "sjf") == 0) {
         return ALG_P_SHORTEST;
     }
     else if(strcmp(str, "rr") == 0) {
