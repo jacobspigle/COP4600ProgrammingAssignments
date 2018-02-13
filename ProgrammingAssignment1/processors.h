@@ -2,6 +2,7 @@
 #define _PROCESSORS_H_
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #define MAX_PROCESSES 1024
 
@@ -19,6 +20,7 @@ typedef struct process {
     int sleep;
     int burst;
 
+    bool isFirstTimeRunning;
     int firstTimeCheck;
     int lastTimeCheck;
 } process;
