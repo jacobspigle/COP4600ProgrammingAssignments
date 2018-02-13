@@ -32,6 +32,7 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     q.count = 0;
 
     int processIndex = 0;
+    char *names[MAX_PROCESSES];
     int waitTimes[MAX_PROCESSES];
     int turnaroundTimes[MAX_PROCESSES];
 
@@ -44,6 +45,9 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
     for(int timer=0; timer<runfor; timer++) {
         while(processIndex < numProcesses && processes[processIndex].sleep == timer) {
+            int id = processes[processIndex].id;
+            names[id] = processes[processIndex].name;
+
             processes[processIndex].lastTimeCheck = timer;
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
             enqueue(&q, &processes[processIndex]);
@@ -77,7 +81,10 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         }
     }
 
+    fprintf(ofp, "Finished at time %d\n\n", runfor);
+
     for(int i=0; i<numProcesses; i++) {
-        
+        fprintf(ofp, "%s wait %d turnaround %d\n",
+                        names[i], waitTimes[i], turnaroundTimes[i]);
     }
 }
