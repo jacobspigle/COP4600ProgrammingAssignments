@@ -84,19 +84,19 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
             break;
             
         default:
-            fprintf(stderr, "Invalid algorithm code.\n");
+            fprintf(stderr, "Invalid algorithm enum.\n");
     }
 }
 
 int stringToAlg(char *str)
 {
-    if(strncmp(str, "fcfs") == 0) {
+    if(strcmp(str, "fcfs") == 0) {
         return ALG_FCFS;
     }
-    else if(strncmp(str, "sjf")) {
+    else if(strcmp(str, "sjf")) {
         return ALG_P_SHORTEST;
     }
-    else if(strncmp(str, "rr") == 0) {
+    else if(strcmp(str, "rr") == 0) {
         return ALG_RROBIN;
     }
     else {
@@ -135,19 +135,19 @@ void printStatusLine(FILE *ofp, int time, process p, char *state)
 {
     fprintf(ofp, "Time %d:", time);
 
-    if (strncmp(state, "idle"))
+    if (strcmp(state, "idle"))
     {
         fprintf(ofp, p.name);
 
-        if (strncmp(state, "arrived") == 0)
+        if (strcmp(state, "arrived") == 0)
         {
             fprintf(ofp, " arrived\n");
         }
-        else if (strncmp(state, "selected") == 0)
+        else if (strcmp(state, "selected") == 0)
         {
             fprintf(ofp, " selected (burst %d)\n", p.burst);
         }
-        else if (strncmp(state, "finished") == 0)
+        else if (strcmp(state, "finished") == 0)
         {
             fprintf(ofp, " finished\n");
         }
