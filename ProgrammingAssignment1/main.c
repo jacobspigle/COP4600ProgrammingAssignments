@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     int alg;
     int quantum;
 
-    fscanf(fp, "processcount %d[^\n]*\n", &numProcesses);
+    fscanf(fp, "\\S*processcount %d[^\n]*\n", &numProcesses);
 
     if(numProcesses > MAX_PROCESSES) {
         fprintf(stderr, "Maximum number of processes exceeded.\n");
