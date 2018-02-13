@@ -5,8 +5,13 @@
 //Programming Assignment 1
 
 #include <stdio.h>
+#include <string.h>
 
 #include "processors.h"
+
+int stringToAlg(char *str);
+void printAlgLine(FILE *fp, int alg);
+void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum);
 
 int main(int argc, char **argv)
 {
