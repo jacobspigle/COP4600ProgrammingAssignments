@@ -155,7 +155,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
 
     if (strcmp(state, "idle"))
     {
-        fprintf(ofp, p->name);
+        fprintf(ofp, "%s", p->name);
 
         if (strcmp(state, "arrived") == 0)
         {
