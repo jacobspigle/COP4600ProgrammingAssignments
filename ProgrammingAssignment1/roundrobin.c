@@ -25,6 +25,8 @@ process *dequeue(processQueue *q)
 
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum)
 {
+    if(DEBUG) printf("%s(n=%d, r=%d, q=%d)\n", __FUNCTION__, numProcesses, runfor, quantum);
+
     sortByArrivalTime(processes, numProcesses);
 
     processQueue q;
