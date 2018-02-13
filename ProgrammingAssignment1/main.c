@@ -95,7 +95,6 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
 
 int stringToAlg(char *str)
 {
-    printf("alg %s", str);
 
     if(strcmp(str, "fcfs") == 0) {
         return ALG_FCFS;
