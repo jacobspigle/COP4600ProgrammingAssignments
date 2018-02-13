@@ -32,17 +32,29 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     q.count = 0;
 
     int processIndex = 0;
+    int waitTimes[MAX_PROCESSES];
+    int turnaroundTimes[MAX_PROCESSES];
+
+    for(int i=0; i<MAX_PROCESSES; i++) {
+        waitTimes[i] = 0;
+        turnaroundTimes[i] = 0;
+    }
 
     process *currentProcess = NULL;
 
     for(int timer=0; timer<runfor; timer++) {
         while(processIndex < numProcesses && processes[processIndex].sleep == timer) {
+            processes[processIndex].lastTimeCheck = timer;
             enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
 
         if(timer % quantum == 0) {
+            turnaroundTimes[currentProcess->id] += (timer - currentProcess->lastTimeCheck);
+            currentProcess->lastTimeCheck = timer;
             enqueue(&q, currentProcess);
+
+            // get next process and see if this is its first time running
             currentProcess = dequeue(&q);
         }
 
