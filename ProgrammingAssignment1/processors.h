@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #define MAX_PROCESSES 1024
+#define DEBUG true
 
 enum error {
     ERR_NONE=0, ERR_FOPEN_FAILED, ERR_MAX_PROCESSES_EXCEEDED

@@ -12,6 +12,9 @@
 int stringToAlg(char *str);
 void printAlgLine(FILE *fp, int alg);
 void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum);
+void eatLine(FILE *fp);
+
+char buffer[256];
 
 int main(int argc, char **argv)
 {
@@ -33,27 +36,32 @@ int main(int argc, char **argv)
     int alg;
     int quantum;
 
-    fscanf(fp, "processcount %d[^\n]*\n", &numProcesses);
+    fscanf(fp, "processcount %d", &numProcesses);
+    fgets(buffer, 256, fp);
 
     if(numProcesses > MAX_PROCESSES) {
         fprintf(stderr, "Maximum number of processes exceeded.\n");
         return ERR_MAX_PROCESSES_EXCEEDED;
     }
 
-    fscanf(fp, "\\S*runfor %d[^\n]*\n", &runfor);
+    fscanf(fp, "runfor %d", &runfor);
+    fgets(buffer, 256, fp);
 
     char algString[100];
-    fscanf(fp, "\\S*use %s[^\n]*\n", algString);
+    fscanf(fp, "use %s", algString);
+    fgets(buffer, 256, fp);
     alg = stringToAlg(algString);
 
     if(alg == ALG_RROBIN) {
-        fscanf(fp, "\\S*quantum %d[^\n]*\n", quantum);
+        fscanf(fp, "quantum %d", &quantum);
     }
+    fgets(buffer, 256, fp);
 
     for(int i=0; i<numProcesses; i++) {
         processes[i].id = i;
-        fscanf(fp, "\\S*process name %s arrival %d burst %d[^\n]*\n",
-                        processes[i].name, processes[i].sleep, processes[i].burst);
+        fscanf(fp, "process name %s arrival %d burst %d",
+                        processes[i].name, &processes[i].sleep, &processes[i].burst);
+        fgets(buffer, 256, fp);
     }
     
     // Write Header to Output File
@@ -65,6 +73,10 @@ int main(int argc, char **argv)
     }
 
     fprintf(ofp, "\n\n");
+
+    if(DEBUG) {
+        // TODO: print processes
+    }
 
     runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
@@ -89,7 +101,7 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
             break;
             
         default:
-            fprintf(stderr, "Invalid algorithm enum.\n");
+            fprintf(stderr, "Invalid algorithm enum: %d\n", alg);
     }
 }
 
@@ -190,5 +202,14 @@ void sortByArrivalTime(process *processes, int numProcesses)
                 processes[j+1] = temp;
             }
         }
+    }
+}
+
+void eatLine(FILE *fp)
+{
+    char ch = fgetc(fp);
+    while(ch != '\n' && ch != EOF)
+    {
+        ch = fgetc(fp);
     }
 }

@@ -25,6 +25,8 @@ process *dequeue(processQueue *q)
 
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum)
 {
+    if(DEBUG) printf("%s(n=%d, r=%d, q=%d)\n", __FUNCTION__, numProcesses, runfor, quantum);
+
     sortByArrivalTime(processes, numProcesses);
 
     processQueue q;
@@ -32,6 +34,7 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     q.count = 0;
 
     int processIndex = 0;
+    char *names[MAX_PROCESSES];
     int waitTimes[MAX_PROCESSES];
     int turnaroundTimes[MAX_PROCESSES];
 
@@ -44,25 +47,54 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
     for(int timer=0; timer<runfor; timer++) {
         while(processIndex < numProcesses && processes[processIndex].sleep == timer) {
+            int id = processes[processIndex].id;
+            names[id] = processes[processIndex].name;
+
             processes[processIndex].lastTimeCheck = timer;
+            printStatusLine(ofp, timer, &processes[processIndex], "arrived");
             enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
 
-        if(timer % quantum == 0) {
+        bool processComplete = currentProcess->burst == 0;
+        if(processComplete) {
+            printStatusLine(ofp, timer, currentProcess, "finished");
+        }
+
+        if(processComplete || timer % quantum == 0) {
+            // accumulate time spent running in turnaround slot
             turnaroundTimes[currentProcess->id] += (timer - currentProcess->lastTimeCheck);
             currentProcess->lastTimeCheck = timer;
-            enqueue(&q, currentProcess);
+
+            // if the process has more burst, queue it back up
+            if(!processComplete) {
+                enqueue(&q, currentProcess);
+            }
 
             // get next process and see if this is its first time running
             currentProcess = dequeue(&q);
+            printStatusLine(ofp, timer, currentProcess, "selected");
+
+            // accumulate time spent waiting in wait slot and turnaround slot
+            int timeSinceLastSelected = (timer - currentProcess->lastTimeCheck);
+            waitTimes[currentProcess->id] += timeSinceLastSelected;
+            turnaroundTimes[currentProcess->id] += timeSinceLastSelected;
+
+            currentProcess->lastTimeCheck = timer;
         }
 
         if(currentProcess == NULL) {
-            fprintf(ofp, "Time %d: Idle\n", timer);
+            printStatusLine(ofp, timer, currentProcess, "idle");
         }
         else {
-            fprintf(ofp, "Time %d: %s arrived\n", timer, currentProcess->name);
+            printStatusLine(ofp, timer, currentProcess, "selected");
         }
+    }
+
+    fprintf(ofp, "Finished at time %d\n\n", runfor);
+
+    for(int i=0; i<numProcesses; i++) {
+        fprintf(ofp, "%s wait %d turnaround %d\n",
+                        names[i], waitTimes[i], turnaroundTimes[i]);
     }
 }
