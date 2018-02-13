@@ -60,6 +60,7 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         }
 
         if(processComplete || timer % quantum == 0) {
+            // accumulate time spent running in turnaround slot
             turnaroundTimes[currentProcess->id] += (timer - currentProcess->lastTimeCheck);
             currentProcess->lastTimeCheck = timer;
 
@@ -71,6 +72,13 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
             // get next process and see if this is its first time running
             currentProcess = dequeue(&q);
             printStatusLine(ofp, timer, currentProcess, "selected");
+
+            // accumulate time spent waiting in wait slot and turnaround slot
+            int timeSinceLastSelected = (timer - currentProcess->lastTimeCheck);
+            waitTimes[currentProcess->id] += timeSinceLastSelected;
+            turnaroundTimes[currentProcess->id] += timeSinceLastSelected;
+
+            currentProcess->lastTimeCheck = timer;
         }
 
         if(currentProcess == NULL) {
