@@ -6,4 +6,4 @@ Hunter Figueroa
 David Ferguson
 
 # Compile
-gcc main.c roundrobin.c fcfs.c shortestjob.c
+    gcc main.c roundrobin.c fcfs.c shortestjob.c
