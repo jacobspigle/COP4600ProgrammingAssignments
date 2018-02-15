@@ -33,21 +33,34 @@ int main(int argc, char **argv)
     int alg;
     int quantum;
 
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        printf("Retrieved line of length %zu :\n", read);
+        printf("%s", line);
+    }
+
+
     fscanf(fp, "processcount %d[^\n]*\n", &numProcesses);
 
     if(numProcesses > MAX_PROCESSES) {
         fprintf(stderr, "Maximum number of processes exceeded.\n");
         return ERR_MAX_PROCESSES_EXCEEDED;
     }
+    printf("processes %d \n", numProcesses );
 
-    fscanf(fp, "\\S*runfor %d[^\n]*\n", &runfor);
+    fscanf(fp, "runfor %d[^\n]*\n", &runfor);
+    printf("runfor %d \n", runfor );
 
     char algString[100];
-    fscanf(fp, "\\S*use %s[^\n]*\n", algString);
+    fscanf(fp, "\\s*use %s[^\n]*\n", &algString);
+    printf("aldstring %s \n", algString );
     alg = stringToAlg(algString);
 
     if(alg == ALG_RROBIN) {
-        fscanf(fp, "\\S*quantum %d[^\n]*\n", quantum);
+        fscanf(fp, "\\S*quantum %d[^\n]*\n", &quantum);
     }
 
     for(int i=0; i<numProcesses; i++) {
@@ -95,7 +108,7 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
 
 int stringToAlg(char *str)
 {
-
+    printf("ALG %s", str);
     if(strcmp(str, "fcfs") == 0) {
         return ALG_FCFS;
     }
