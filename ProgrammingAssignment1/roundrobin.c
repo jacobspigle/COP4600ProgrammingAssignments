@@ -1,58 +1,29 @@
 #include "processors.h"
 
-typedef struct processQueue {
-    process *p[MAX_PROCESSES];
-    int head, count;
-} processQueue;
-
-void enqueue(processQueue *q, process *p)
-{
-    q->p[(q->head + q->count) % MAX_PROCESSES] = p;
-    q->count++;
-}
-
-process *dequeue(processQueue *q)
-{
-    if(q->count == 0) {
-        return NULL;
-    }
-
-    process *p = q->p[q->head];
-    q->head = (q->head + 1) % MAX_PROCESSES;
-
-    return p;
-}
-
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum)
 {
     if(DEBUG) printf("%s(n=%d, r=%d, q=%d)\n", __FUNCTION__, numProcesses, runfor, quantum);
-
-    sortByArrivalTime(processes, numProcesses);
 
     processQueue q;
     q.head = 0;
     q.count = 0;
 
     int processIndex = 0;
-    char *names[MAX_PROCESSES];
-    int waitTimes[MAX_PROCESSES];
-    int turnaroundTimes[MAX_PROCESSES];
 
-    for(int i=0; i<MAX_PROCESSES; i++) {
-        waitTimes[i] = 0;
-        turnaroundTimes[i] = 0;
+    for(int i = 0; i < numProcesses; i++) {
+        processes[i].wait = 0;
+        processes[i].turnaround = 0;
     }
 
     process *currentProcess = NULL;
 
     for(int timer=0; timer<runfor; timer++) {
-        while(processIndex < numProcesses && processes[processIndex].sleep == timer) {
+        while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
             int id = processes[processIndex].id;
-            names[id] = processes[processIndex].name;
 
             processes[processIndex].lastTimeCheck = timer;
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
-            enqueue(&q, &processes[processIndex]);
+            enqueue(&q, &processes[processIndex], numProcesses);
             processIndex++;
         }
 
@@ -63,22 +34,22 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
         if(processComplete || timer % quantum == 0) {
             // accumulate time spent running in turnaround slot
-            turnaroundTimes[currentProcess->id] += (timer - currentProcess->lastTimeCheck);
+            processes[currentProcess->id].turnaround += (timer - currentProcess->lastTimeCheck);
             currentProcess->lastTimeCheck = timer;
 
             // if the process has more burst, queue it back up
             if(!processComplete) {
-                enqueue(&q, currentProcess);
+                enqueue(&q, currentProcess, numProcesses);
             }
 
             // get next process and see if this is its first time running
-            currentProcess = dequeue(&q);
+            currentProcess = dequeue(&q, numProcesses);
             printStatusLine(ofp, timer, currentProcess, "selected");
 
             // accumulate time spent waiting in wait slot and turnaround slot
             int timeSinceLastSelected = (timer - currentProcess->lastTimeCheck);
-            waitTimes[currentProcess->id] += timeSinceLastSelected;
-            turnaroundTimes[currentProcess->id] += timeSinceLastSelected;
+            processes[currentProcess->id].wait += timeSinceLastSelected;
+            processes[currentProcess->id].turnaround += timeSinceLastSelected;
 
             currentProcess->lastTimeCheck = timer;
         }
@@ -91,10 +62,5 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         }
     }
 
-    fprintf(ofp, "Finished at time %d\n\n", runfor);
-
-    for(int i=0; i<numProcesses; i++) {
-        fprintf(ofp, "%s wait %d turnaround %d\n",
-                        names[i], waitTimes[i], turnaroundTimes[i]);
-    }
+    printFooter(ofp, runfor, processes, numProcesses);
 }

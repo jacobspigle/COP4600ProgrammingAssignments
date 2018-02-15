@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     for(int i=0; i<numProcesses; i++) {
         processes[i].id = i;
         fscanf(fp, "process name %s arrival %d burst %d",
-                        processes[i].name, &processes[i].sleep, &processes[i].burst);
+                        processes[i].name, &processes[i].arrival, &processes[i].burst);
         fgets(buffer, 256, fp);
     }
     
@@ -78,6 +78,7 @@ int main(int argc, char **argv)
         // TODO: print processes
     }
 
+    sortByArrivalTime(processes, numProcesses);
     runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
     fclose(fp);
@@ -176,13 +177,13 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
 
 //call this function inside ****.c
 //output 'finished' time and turnaround time for each process
-void printFooter(FILE *ofp, int time, process processes[], int numProcesses)
+void printFooter(FILE *ofp, int runfor, process processes[], int numProcesses)
 {
-    fprintf(ofp, "Finished at time %d\n\n", time);
+    fprintf(ofp, "Finished at time %d\n\n", runfor);
 
     for (int i = 0; i < numProcesses; i++)
     {
-        fprintf(ofp, "%s wait %d turnaround %d\n", processes[i].name, processes[i].sleep, (processes[i].burst + processes[i].sleep));
+        fprintf(ofp, "%s wait %d turnaround %d\n", processes[i].name, processes[i].wait, processes[i].turnaround);
     }
 }
 
@@ -191,11 +192,11 @@ void sortByArrivalTime(process *processes, int numProcesses)
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
         for(int j=0; j<numProcesses-i-1; j++) {
-            int prevSleep = processes[j].sleep;
-            int nextSleep = processes[j+1].sleep;
+            int prevarrival = processes[j].arrival;
+            int nextarrival = processes[j+1].arrival;
 
             // sort identical arrival times by ascending id
-            if(prevSleep > nextSleep || (prevSleep == nextSleep && processes[j].id > processes[j+1].id)) {
+            if(prevarrival > nextarrival || (prevarrival == nextarrival && processes[j].id > processes[j+1].id)) {
                 // swap
                 process temp = processes[j];
                 processes[j] = processes[j+1];
@@ -213,3 +214,22 @@ void eatLine(FILE *fp)
         ch = fgetc(fp);
     }
 }
+
+void enqueue(processQueue *q, process *p, int numProcesses)
+{
+    q->p[(q->head + q->count) % numProcesses] = p;
+    q->count++;
+}
+
+process *dequeue(processQueue *q, int numProcesses)
+{
+    if(q->count == 0) {
+        return NULL;
+    }
+
+    process *p = q->p[q->head];
+    q->head = (q->head + 1) % numProcesses;
+
+    return p;
+}
+
