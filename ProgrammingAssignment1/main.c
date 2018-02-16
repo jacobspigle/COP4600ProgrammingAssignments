@@ -243,6 +243,7 @@ process *dequeue(processQueue *q, int numProcesses)
 
     process *p = q->p[q->head];
     q->head = (q->head + 1) % numProcesses;
+    q->count--;
 
     return p;
 }
