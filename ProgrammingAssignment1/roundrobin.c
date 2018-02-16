@@ -17,53 +17,49 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         printf("%d\n", timer);
         // Queue up new arrivals
         while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
-            processes[processIndex].timeStamp = timer;
             processes[processIndex].initialBurst = processes[processIndex].burst;
 
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
-            enqueue(&q, &processes[processIndex], numProcesses);
+            enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
 
-        quantumTimer--;
-        bool processComplete = false;
+        if(currentProcess == NULL) {
+            // get next process
+            currentProcess = dequeue(&q);
 
-        // run process for 1 time unit
-        if(currentProcess != NULL) {
+            if(currentProcess != NULL) {
+                quantumTimer = quantum;
+                printStatusLine(ofp, timer, currentProcess, "selected");
+            }
+            else {
+                // TODO: make this work
+                printStatusLine(ofp, timer, currentProcess, "idle");
+            }
+        }
+        else {
+            // run process, then check if its done or if the quantum is over
             if(currentProcess->burst <= 0) {
-                fprintf(stderr, "Process remaining time invalid.\n");
+                fprintf(stderr, "Process remaining time invalid %d => %d.\n", currentProcess->initialBurst, currentProcess->burst);
                 return;
             }
 
             currentProcess->burst--;
+            quantumTimer--;
 
-            processComplete = (currentProcess->burst == 0);
-            if(processComplete) {
+            if(currentProcess->burst == 0) {
                 // calculate turnaround and wait for completed process
-                currentProcess->turnaround = timer - currentProcess->arrival;
+                currentProcess->turnaround = timer - currentProcess->arrival + 1;
                 currentProcess->wait = currentProcess->turnaround - currentProcess->initialBurst;
 
                 printStatusLine(ofp, timer, currentProcess, "finished");
+
+                currentProcess = NULL;
             }
-        }
-
-        if(processComplete || quantumTimer == 0) {
-            // If process is not complete, requeue
-            if(currentProcess != NULL && !processComplete) {
-                enqueue(&q, currentProcess, numProcesses);
+            else if(quantumTimer == 0) {
+                // requeue
+                enqueue(&q, currentProcess);
             }
-
-            // get next process
-            currentProcess = dequeue(&q, numProcesses);
-            quantumTimer = quantum;
-
-            if(currentProcess != NULL) {
-                printStatusLine(ofp, timer, currentProcess, "selected");
-            }
-        }
-
-        if(currentProcess == NULL) {
-            printStatusLine(ofp, timer, currentProcess, "idle");
         }
     }
 
