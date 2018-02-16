@@ -12,7 +12,6 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
     int processIndex = 0;
     int quantumTimer = quantum;
-    bool wasIdle = false;
 
     process *currentProcess = NULL;
 
@@ -56,14 +55,9 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
         // Do work
         if(currentProcess == NULL) {
-            if(wasIdle == false) {
-                printStatusLine(ofp, timer, NULL, "idle");
-                wasIdle = true;
-            }
+            printStatusLine(ofp, timer, NULL, "idle");
         }
         else {
-            wasIdle = false;
-
             currentProcess->burst--;
             quantumTimer--;
         }
