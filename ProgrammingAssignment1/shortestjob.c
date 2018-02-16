@@ -33,7 +33,6 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
                 }
             }
         }
-
         //check to see if any processes have arrived
         if (shortestBurst != NULL)
         {

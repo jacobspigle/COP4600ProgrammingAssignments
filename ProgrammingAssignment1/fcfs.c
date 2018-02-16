@@ -3,59 +3,57 @@
 
 void runFCFS(FILE *ofp, process *processes, int numProcesses, int runfor)
 {
-    printf("first come\n");
     int i;
-
-    for(i = 0; i < numProcesses; i++){
-        printf("arrival %d \n", processes[i].arrival);
-    }
 
     int tick = 0;
     int count = 0;
-    int numCompleted = 0;
+    int index = -1;
     bool running = false;
     process* queue[numProcesses];
 
-    while(numCompleted < numProcesses){
+    while(tick < runfor+1){
         
         // Check Arrivals
         for(i = 0; i < numProcesses; i++){
             if(tick == processes[i].arrival ){
+                if(index == -1)
+                    index++;
                 queue[count++] = &processes[i];
                 printStatusLine( ofp, tick, queue[count-1], "arrived");
             }
         }
         // Run Burst
         if(running){
-            queue[numCompleted]->burst--;
-            queue[numCompleted]->turnaround++;
-            if( queue[numCompleted]->burst <= 0){
-                printStatusLine( ofp, tick, queue[numCompleted], "finished");
+            queue[index]->burst--;
+            queue[index]->turnaround++;
+            if( queue[index]->burst <= 0){
+                printStatusLine( ofp, tick, queue[index], "finished");
                 running = false;
-                numCompleted++;
-                printf("Completed on tick %d\n", tick);
+                index++;
+            //    printf("Completed on tick %d\n", tick);
             }
         }
         // Select
-        if (running == false && numCompleted < numProcesses && tick >= queue[numCompleted]->arrival){
-            running = true;
-            printStatusLine( ofp, tick, queue[numCompleted], "selected");
-            printf("Starting %s in tick %d\n", queue[numCompleted]->name, tick);
+        if(running == false){
+            if ( index >= 0 && index < numProcesses  && tick >= queue[index]->arrival){
+                running = true;
+                printStatusLine( ofp, tick, queue[index], "selected");
+              //  printf("Starting %s in tick %d\n", queue[index]->name, tick);
+            }
+            else if( tick < runfor ){
+                printStatusLine( ofp, tick, queue[index], "idle");
+            }
         }
 
-        for(i = numCompleted + 1; i < count; i++){
-            queue[i]->wait++;
-            queue[i]->turnaround++;
-        }
+        if(index >= 0 )
+            for(i = index + 1; i < count; i++){
+                queue[i]->wait++;
+                queue[i]->turnaround++;
+            }
 
-        // Avoid End Tick
-        if(numCompleted < numProcesses){
-            tick++;
-            printf("tick %d\n", tick);
-        }
-        if(tick > 50)
-            break;
+        tick++;
+       // printf("tick %d\n", tick);
     }
 
-    printFooter(ofp, tick, processes, numProcesses);
+    printFooter(ofp, tick-1, processes, numProcesses);
 }
