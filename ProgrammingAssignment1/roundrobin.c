@@ -3,6 +3,8 @@
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum)
 {
     if(DEBUG) printf("%s(n=%d, r=%d, q=%d)\n", __FUNCTION__, numProcesses, runfor, quantum);
+
+    fprintf(ofp, "Quantum %d\n", quantum);
     
     processQueue q;
     q.head = 0;
@@ -10,11 +12,11 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
     int processIndex = 0;
     int quantumTimer = quantum;
+    bool wasIdle = false;
 
     process *currentProcess = NULL;
 
     for(int timer=0; timer<runfor; timer++) {
-        printf("%d\n", timer);
         // Queue up new arrivals
         while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
             processes[processIndex].initialBurst = processes[processIndex].burst;
@@ -23,43 +25,45 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
             enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
-
+        
+        // Handle current process state
+        bool getNext = false;
         if(currentProcess == NULL) {
-            // get next process
+            getNext = true;
+        }
+        else {
+            if(currentProcess->burst == 0) {
+                printStatusLine(ofp, timer, currentProcess, "finished");
+                getNext = true;
+            }
+            else if(quantumTimer == 0) {
+                enqueue(&q, currentProcess);
+                getNext = true;
+            }
+        }
+
+        // Get next if necessary
+        if(getNext) {
             currentProcess = dequeue(&q);
 
             if(currentProcess != NULL) {
-                quantumTimer = quantum;
                 printStatusLine(ofp, timer, currentProcess, "selected");
+                quantumTimer = quantum;
             }
-            else {
-                // TODO: make this work
-                printStatusLine(ofp, timer, currentProcess, "idle");
+        }
+
+        // Do work
+        if(currentProcess == NULL) {
+            if(wasIdle == false) {
+                printStatusLine(ofp, timer, NULL, "idle");
+                wasIdle = true;
             }
         }
         else {
-            // run process, then check if its done or if the quantum is over
-            if(currentProcess->burst <= 0) {
-                fprintf(stderr, "Process remaining time invalid %d => %d.\n", currentProcess->initialBurst, currentProcess->burst);
-                return;
-            }
+            wasIdle = false;
 
             currentProcess->burst--;
             quantumTimer--;
-
-            if(currentProcess->burst == 0) {
-                // calculate turnaround and wait for completed process
-                currentProcess->turnaround = timer - currentProcess->arrival + 1;
-                currentProcess->wait = currentProcess->turnaround - currentProcess->initialBurst;
-
-                printStatusLine(ofp, timer, currentProcess, "finished");
-
-                currentProcess = NULL;
-            }
-            else if(quantumTimer == 0) {
-                // requeue
-                enqueue(&q, currentProcess);
-            }
         }
     }
 
