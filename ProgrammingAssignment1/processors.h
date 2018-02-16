@@ -19,13 +19,13 @@ typedef struct process {
     int id;
     char name[100];
     int arrival;
+    int initialBurst;
     int burst;
+
+    int remainingTime;
     int wait;
     int turnaround;
-
-    bool isFirstTimeRunning;
-    int firstTimeCheck;
-    int lastTimeCheck;
+    int timeStamp;
 } process;
 
 typedef struct processQueue {

@@ -1,0 +1,19 @@
+Using Round-Robin
+Quantum 2
+
+
+Time 0:P2 arrived
+Time 1:P2 selected (burst 9)
+Time 3:P1 arrived
+Time 3:P1 selected (burst 5)
+Time 5:P2 selected (burst 7)
+Time 7:P1 selected (burst 3)
+Time 9:P2 selected (burst 5)
+Time 11:P1 selected (burst 1)
+Time 12:P1 finished
+Time 12:P2 selected (burst 3)
+Time 14:P2 selected (burst 1)
+Finished at time 15
+
+P2 wait 0 turnaround 0
+P1 wait 4 turnaround 9
