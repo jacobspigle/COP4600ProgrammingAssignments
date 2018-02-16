@@ -203,8 +203,6 @@ void printFooter(FILE *ofp, int runfor, process processes[], int numProcesses)
 
 void sortByArrivalTime(process *processes, int numProcesses)
 {
-
-    printf("here");
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
         for(int j=0; j<numProcesses-i-1; j++) {
@@ -231,22 +229,31 @@ void eatLine(FILE *fp)
     }
 }
 
-void enqueue(processQueue *q, process *p, int numProcesses)
+void enqueue(processQueue *q, process *p)
 {
-    q->p[(q->head + q->count) % numProcesses] = p;
+    q->p[(q->head + q->count) % MAX_PROCESSES] = p;
     q->count++;
 }
 
-process *dequeue(processQueue *q, int numProcesses)
+process *dequeue(processQueue *q)
 {
     if(q->count == 0) {
         return NULL;
     }
 
     process *p = q->p[q->head];
-    q->head = (q->head + 1) % numProcesses;
+    q->head = (q->head + 1) % MAX_PROCESSES;
     q->count--;
 
     return p;
 }
 
+void printQueue(FILE *ofp, processQueue *q)
+{ 
+    fprintf(ofp, "{");
+    for(int i=0; i<q->count; i++) {
+        process *p = q->p[(q->head + i) % MAX_PROCESSES];
+        fprintf(ofp, "%s(burst %d) ", p->name, p->burst);
+    }
+    fprintf(ofp, "}\n");
+}
