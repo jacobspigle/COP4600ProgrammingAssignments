@@ -4,48 +4,53 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
 {
     //initialize tick
     int tick = 0;
-
-    //set to null, assign when a process has arrived
-    process *shortestBurst = NULL;
-    
+    processQueue queue;
+    queue.head = 0;
+    queue.count = 0;
+    int processIndex;
     //go through 'runfor' times
     while (tick < runfor)
     {
-        //find process with smallest burst
-        for (int i = 0; i < numProcesses; i++)
+        //if a process arrives this tick
+        while(processIndex < numProcesses && processes[processIndex].arrival == tick)
         {
-            //check if processes have arrived, set as shortestBurst to contradict later
-            if (processes[i].arrival == tick)
+            printStatusLine(ofp, tick, &processes[processIndex], "arrived");
+            enqueue(&queue, &processes[processIndex]);
+            queue.p[queue.head]->initialBurst = queue.p[queue.head]->burst;
+            processIndex++;
+        }
+        
+        //if queue is empty
+        if (queue.count == 0)
+        {
+            printStatusLine(ofp, tick, 0, "idle");
+        }
+        else
+        {
+            for (int i = 0; i < queue.count - 1; i++)
             {
-                printStatusLine(ofp, tick, &processes[i], "arrived");
-                shortestBurst = &processes[i];
-            }
-
-            if (shortestBurst != NULL)
-            {
-                if (((processes[i].burst < shortestBurst->burst)                //processes[i] has shorter burst AND
-                    && (processes[i].burst != 0)                                //processes[i] has not finished AND
-                    && (processes[i].arrival <= tick))                          //processes[i] has arrived
-                    || (shortestBurst->burst == 0 && processes[i].burst != 0))  //OR shortestBurst has finished AND processes[i] has not
+                //sort new process in queue
+                if (queue.p[queue.head + i]->burst >= queue.p[queue.head + i + 1]->burst)
                 {
-                    //set new shortestBurst
-                    shortestBurst = &processes[i];
+                    process *temp = queue.p[queue.head + i]; 
+                    queue.p[queue.head + i] = queue.p[queue.head + i + 1];
+                    queue.p[queue.head + i + 1] = temp;
                 }
             }
-        }
-        //check to see if any processes have arrived
-        if (shortestBurst != NULL)
-        {
+
             //select process with shortest burst
-            printStatusLine(ofp, tick, shortestBurst, "selected");
-            
-            //decrement burst count
-            shortestBurst->burst--;
+            printStatusLine(ofp, tick, queue.p[queue.head], "selected");
+
+            //decrement burst count, increment turnaround
+            queue.p[queue.head]->burst--;
 
             //process is finished if burst is now 0
-            if (shortestBurst->burst == 0)
+            if (queue.p[queue.head]->burst == 0)
             {
-                printStatusLine(ofp, tick + 1, shortestBurst, "finished");
+                printStatusLine(ofp, tick + 1, queue.p[queue.head], "finished");
+                queue.p[queue.head]->turnaround = tick - queue.p[queue.head]->arrival + 1;
+                queue.p[queue.head]->wait = queue.p[queue.head]->turnaround - queue.p[queue.head]->initialBurst;
+                dequeue(&queue);
             }
         }
 

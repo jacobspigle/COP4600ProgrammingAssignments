@@ -18,10 +18,11 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     for(int timer=0; timer<runfor; timer++) {
         // Queue up new arrivals
         while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
+            processes[processIndex].timeStamp = timer;
             processes[processIndex].initialBurst = processes[processIndex].burst;
 
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
-            enqueue(&q, &processes[processIndex]);
+            enqueue(&q, &processes[processIndex], numProcesses);
             processIndex++;
         }
         
@@ -60,6 +61,10 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         else {
             currentProcess->burst--;
             quantumTimer--;
+        }
+
+        if(currentProcess == NULL) {
+            printStatusLine(ofp, timer, currentProcess, "idle");
         }
     }
 
