@@ -152,6 +152,10 @@ void printAlgLine(FILE *fp, int alg)
 //takes current tick (time), the processName, the burst of that process, and what state the process is in.
 void printStatusLine(FILE *ofp, int time, process *p, char *state)
 {
+    if(p == NULL) {
+        return;
+    }
+    
     fprintf(ofp, "Time %d:", time);
 
     if (strcmp(state, "idle"))
