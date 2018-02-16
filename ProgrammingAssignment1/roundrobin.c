@@ -62,10 +62,6 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
             currentProcess->burst--;
             quantumTimer--;
         }
-
-        if(currentProcess == NULL) {
-            printStatusLine(ofp, timer, currentProcess, "idle");
-        }
     }
 
     printFooter(ofp, runfor, processes, numProcesses);
