@@ -191,9 +191,16 @@ void printFooter(FILE *ofp, int runfor, process processes[], int numProcesses)
 {
     fprintf(ofp, "Finished at time %d\n\n", runfor);
 
-    for (int i = 0; i < numProcesses; i++)
-    {
-        fprintf(ofp, "%s wait %d turnaround %d\n", processes[i].name, processes[i].wait, processes[i].turnaround);
+    // print in ascending id order
+    for (int i = 0; i < numProcesses; i++) {
+        for(int j=0; j<numProcesses; j++) {
+            if(processes[j].id == i) {
+                fprintf(ofp, "%s wait %d turnaround %d\n",
+                        processes[i].name, processes[i].wait, processes[i].turnaround);
+                
+                break;
+            }
+        }
     }
 }
 
