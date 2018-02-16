@@ -12,6 +12,9 @@
 int stringToAlg(char *str);
 void printAlgLine(FILE *fp, int alg);
 void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum);
+void eatLine(FILE *fp);
+
+char buffer[256];
 
 int main(int argc, char **argv)
 {
@@ -33,44 +36,41 @@ int main(int argc, char **argv)
     int alg;
     int quantum;
 
-    char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
-    while ((read = getline(&line, &len, fp)) != -1) {
-        printf("Retrieved line of length %zu :\n", read);
-        printf("%s", line);
-    }
-
-
-    fscanf(fp, "processcount %d[^\n]*\n", &numProcesses);
+    fscanf(fp, "processcount %d", &numProcesses);
+    fgets(buffer, 256, fp);
 
     if(numProcesses > MAX_PROCESSES) {
         fprintf(stderr, "Maximum number of processes exceeded.\n");
         return ERR_MAX_PROCESSES_EXCEEDED;
     }
-    printf("processes %d \n", numProcesses );
+    if(DEBUG) printf("processes %d \n", numProcesses );
 
-    fscanf(fp, "runfor %d[^\n]*\n", &runfor);
-    printf("runfor %d \n", runfor );
+    fscanf(fp, "runfor %d", &runfor);
+    fgets(buffer, 256, fp);
+    if(DEBUG) printf("RunFor %d \n", runfor );
+
 
     char algString[100];
-    fscanf(fp, "\\s*use %s[^\n]*\n", &algString);
-    printf("aldstring %s \n", algString );
+    fscanf(fp, "use %s", algString);
+    fgets(buffer, 256, fp);
     alg = stringToAlg(algString);
+    if(DEBUG) printf("ALG %d end \n", alg );
 
     if(alg == ALG_RROBIN) {
-        fscanf(fp, "\\S*quantum %d[^\n]*\n", &quantum);
+        fscanf(fp, "quantum %d", &quantum);
+        if(DEBUG) printf("Quantum %d \n", quantum );
     }
+    fgets(buffer, 256, fp);
 
     for(int i=0; i<numProcesses; i++) {
         processes[i].id = i;
-        fscanf(fp, "\\S*process name %s arrival %d burst %d[^\n]*\n",
-                        processes[i].name, processes[i].sleep, processes[i].burst);
+        fscanf(fp, "process name %s arrival %d burst %d",
+                        processes[i].name, &processes[i].sleep, &processes[i].burst);
+        fgets(buffer, 256, fp);
     }
     
     // Write Header to Output File
-    fprintf(ofp, "%d processes\n", numProcesses);
+    if(DEBUG) fprintf(ofp, "%d processes\n", numProcesses);
     printAlgLine(ofp, alg);
 
     if(alg == ALG_RROBIN) {
@@ -79,14 +79,19 @@ int main(int argc, char **argv)
 
     fprintf(ofp, "\n\n");
 
+    if(DEBUG) {
+        // TODO: print processes
+    }
+
     runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
     fclose(fp);
-    fclose(ofp);
+    fclose(ofp); 
 }
 
 void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum)
 {
+    printf("Run Processor\n");
     switch(alg)
     {
         case ALG_FCFS:
@@ -98,11 +103,15 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
             break;
             
         case ALG_RROBIN:
+            for(int i=0; i<numProcesses; i++) {
+                printf("Case RR  Name: %s, Sleep: %d, Burst: %d, NP:%d RF:%d Q:%d\n", processes[i].name, processes[i].sleep, processes[i].burst, numProcesses, runfor, quantum);
+            }
+
             runRoundRobin(ofp, processes, numProcesses, runfor, quantum);
             break;
             
         default:
-            fprintf(stderr, "Invalid algorithm enum.\n");
+            fprintf(stderr, "Invalid algorithm enum: %d\n", alg);
     }
 }
 
@@ -156,7 +165,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
 
     if (strcmp(state, "idle"))
     {
-        fprintf(ofp, p->name);
+        fprintf(ofp, "%s", p->name);
 
         if (strcmp(state, "arrived") == 0)
         {
@@ -189,6 +198,8 @@ void printFooter(FILE *ofp, int time, process processes[], int numProcesses)
 
 void sortByArrivalTime(process *processes, int numProcesses)
 {
+
+    printf("here");
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
         for(int j=0; j<numProcesses-i-1; j++) {
@@ -203,5 +214,14 @@ void sortByArrivalTime(process *processes, int numProcesses)
                 processes[j+1] = temp;
             }
         }
+    }
+}
+
+void eatLine(FILE *fp)
+{
+    char ch = fgetc(fp);
+    while(ch != '\n' && ch != EOF)
+    {
+        ch = fgetc(fp);
     }
 }

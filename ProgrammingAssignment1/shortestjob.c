@@ -12,14 +12,24 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
         //find process with smallest burst
         for (int i = 0; i < numProcesses; i++)
         {
+            //set new shortestBurst if previous shortestBurst has finished
+            if ((shortestBurst->burst == 0) && (processes[i].burst != 0))
+            {
+                shortestBurst = &processes[i];
+            }
+
             //notify if process has arrived
             if (processes[i].sleep == tick)
             {
                 printStatusLine(ofp, tick, &processes[i], "arrived");
             }
 
-            //only if processes[i] still has > 0 burst AND is smaller than shortestBurst process
-            if ((processes[i].burst < shortestBurst->burst) && (processes[i].burst != 0))
+            /*
+            only if processes[i] still has > 0 burst,
+            is smaller than shortestBurst process
+            and processes[i] has arrived.
+            */
+            if ((processes[i].burst < shortestBurst->burst) && (processes[i].burst != 0) && (processes[i].sleep <= tick))
             {
                 shortestBurst = &processes[i];
             }
