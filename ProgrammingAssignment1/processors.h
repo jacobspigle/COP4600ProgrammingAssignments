@@ -38,7 +38,7 @@ void runShortestJobFirst(FILE *ofp, process *processes, int numProcesses, int ru
 void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, int quantum);
 void printStatusLine(FILE *ofp, int time, process *p, char *state);
 void printFooter(FILE *ofp, int time, process *processes, int numProcesses);
-void sortByArrivalTime(process *processes);
+void sortByArrivalTime(process *processes, int numProcesses);
 void enqueue(processQueue *q, process *p);
 process *dequeue(processQueue *q);
 
