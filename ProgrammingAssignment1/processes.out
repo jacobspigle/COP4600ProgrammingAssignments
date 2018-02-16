@@ -1,0 +1,23 @@
+2 processes
+Using Shortest Job First
+
+
+Time 0: IDLE
+Time 1: IDLE
+Time 2: IDLE
+Time 3: IDLE
+Time 4: IDLE
+Time 5: IDLE
+Time 6: IDLE
+Time 7: IDLE
+Time 8: IDLE
+Time 9: IDLE
+Time 10: IDLE
+Time 11: IDLE
+Time 12: IDLE
+Time 13: IDLE
+Time 14: IDLE
+Finished at time 15
+
+P2 wait 0 turnaround 0
+P1 wait 0 turnaround 0
