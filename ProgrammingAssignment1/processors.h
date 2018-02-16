@@ -20,12 +20,12 @@ typedef struct process {
     char name[100];
     int arrival;
     int burst;
+
+    // values to modify
+    int remainingTime;
     int wait;
     int turnaround;
-
-    bool isFirstTimeRunning;
-    int firstTimeCheck;
-    int lastTimeCheck;
+    int timeStamp;
 } process;
 
 typedef struct processQueue {
