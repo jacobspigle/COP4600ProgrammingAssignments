@@ -154,16 +154,14 @@ void printAlgLine(FILE *fp, int alg)
         default:
             fprintf(fp, "ERROR");
     }
+
+    fprintf(fp, "\n");
 }
 
 //call this function inside ****.c
 //takes current tick (time), the processName, the burst of that process, and what state the process is in.
 void printStatusLine(FILE *ofp, int time, process *p, char *state)
-{
-    if(p == NULL) {
-        return;
-    }
-    
+{    
     fprintf(ofp, "Time %d: ", time);
 
     if (strcmp(state, "idle"))
@@ -203,7 +201,7 @@ void sortByArrivalTime(process *processes, int numProcesses)
 {
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
-        
+
         bool swapped = false;
         for(int j=0; j<numProcesses-i-1; j++) {
             int prevarrival = processes[j].arrival;
