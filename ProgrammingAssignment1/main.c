@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         fprintf(ofp, "Quantum %d\n", quantum);
     }
 
-    fprintf(ofp, "\n\n");
+    fprintf(ofp, "\n");
 
     if(DEBUG) {
         // TODO: print processes
@@ -134,7 +134,7 @@ void printAlgLine(FILE *fp, int alg)
             break;
         
         case ALG_P_SHORTEST:
-            fprintf(fp, "Shortest Job First");
+            fprintf(fp, "Shortest Job First (Pre)");
             break;
 
         case ALG_RROBIN:
