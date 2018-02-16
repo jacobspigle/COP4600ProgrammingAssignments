@@ -43,17 +43,22 @@ int main(int argc, char **argv)
         fprintf(stderr, "Maximum number of processes exceeded.\n");
         return ERR_MAX_PROCESSES_EXCEEDED;
     }
+    if(DEBUG) printf("processes %d \n", numProcesses );
 
     fscanf(fp, "runfor %d", &runfor);
     fgets(buffer, 256, fp);
+    if(DEBUG) printf("RunFor %d \n", runfor );
+
 
     char algString[100];
     fscanf(fp, "use %s", algString);
     fgets(buffer, 256, fp);
     alg = stringToAlg(algString);
+    if(DEBUG) printf("ALG %d end \n", alg );
 
     if(alg == ALG_RROBIN) {
         fscanf(fp, "quantum %d", &quantum);
+        if(DEBUG) printf("Quantum %d \n", quantum );
     }
     fgets(buffer, 256, fp);
 
@@ -65,7 +70,7 @@ int main(int argc, char **argv)
     }
     
     // Write Header to Output File
-    fprintf(ofp, "%d processes\n", numProcesses);
+    if(DEBUG) fprintf(ofp, "%d processes\n", numProcesses);
     printAlgLine(ofp, alg);
 
     if(alg == ALG_RROBIN) {
@@ -82,11 +87,12 @@ int main(int argc, char **argv)
     runProcessor(ofp, processes, numProcesses, runfor, alg, quantum);
 
     fclose(fp);
-    fclose(ofp);
+    fclose(ofp); 
 }
 
 void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, int alg, int quantum)
 {
+    printf("Run Processor\n");
     switch(alg)
     {
         case ALG_FCFS:
@@ -98,6 +104,10 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
             break;
             
         case ALG_RROBIN:
+            for(int i=0; i<numProcesses; i++) {
+                printf("Case RR  Name: %s, Sleep: %d, Burst: %d, NP:%d RF:%d Q:%d\n", processes[i].name, processes[i].wait, processes[i].burst, numProcesses, runfor, quantum);
+            }
+
             runRoundRobin(ofp, processes, numProcesses, runfor, quantum);
             break;
             
@@ -108,7 +118,7 @@ void runProcessor(FILE *ofp, process *processes, int numProcesses, int runfor, i
 
 int stringToAlg(char *str)
 {
-
+    printf("ALG %s", str);
     if(strcmp(str, "fcfs") == 0) {
         return ALG_FCFS;
     }
@@ -193,6 +203,8 @@ void printFooter(FILE *ofp, int runfor, process processes[], int numProcesses)
 
 void sortByArrivalTime(process *processes, int numProcesses)
 {
+
+    printf("here");
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
         for(int j=0; j<numProcesses-i-1; j++) {
