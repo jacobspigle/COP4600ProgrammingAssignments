@@ -130,7 +130,7 @@ void printAlgLine(FILE *fp, int alg)
     switch(alg)
     {
         case ALG_FCFS:
-            fprintf(fp, "First-Come-First-Served");
+            fprintf(fp, "First Come First Served");
             break;
         
         case ALG_P_SHORTEST:
@@ -144,15 +144,13 @@ void printAlgLine(FILE *fp, int alg)
         default:
             fprintf(fp, "ERROR");
     }
-
-    fprintf(fp, "\n");
 }
 
 //call this function inside ****.c
 //takes current tick (time), the processName, the burst of that process, and what state the process is in.
 void printStatusLine(FILE *ofp, int time, process *p, char *state)
 {
-    fprintf(ofp, "Time %d:", time);
+    fprintf(ofp, "Time %d: ", time);
 
     if (strcmp(state, "idle"))
     {
@@ -172,7 +170,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
         }
     }
     else
-        fprintf(ofp, "Idle\n");
+        fprintf(ofp, "IDLE\n");
 }
 
 //call this function inside ****.c
@@ -191,6 +189,8 @@ void sortByArrivalTime(process *processes, int numProcesses)
 {
     // bubble sort
     for(int i=0; i<numProcesses; i++) {
+        
+        bool swapped = false;
         for(int j=0; j<numProcesses-i-1; j++) {
             int prevarrival = processes[j].arrival;
             int nextarrival = processes[j+1].arrival;
@@ -201,7 +201,13 @@ void sortByArrivalTime(process *processes, int numProcesses)
                 process temp = processes[j];
                 processes[j] = processes[j+1];
                 processes[j+1] = temp;
+
+                swapped = true;
             }
+        }
+
+        if(swapped == false) {
+            break;
         }
     }
 }
@@ -215,21 +221,31 @@ void eatLine(FILE *fp)
     }
 }
 
-void enqueue(processQueue *q, process *p, int numProcesses)
+void enqueue(processQueue *q, process *p)
 {
-    q->p[(q->head + q->count) % numProcesses] = p;
+    q->p[(q->head + q->count) % MAX_PROCESSES] = p;
     q->count++;
 }
 
-process *dequeue(processQueue *q, int numProcesses)
+process *dequeue(processQueue *q)
 {
     if(q->count == 0) {
         return NULL;
     }
 
     process *p = q->p[q->head];
-    q->head = (q->head + 1) % numProcesses;
+    q->head = (q->head + 1) % MAX_PROCESSES;
+    q->count--;
 
     return p;
 }
 
+void printQueue(FILE *ofp, processQueue *q)
+{ 
+    fprintf(ofp, "{");
+    for(int i=0; i<q->count; i++) {
+        process *p = q->p[(q->head + i) % MAX_PROCESSES];
+        fprintf(ofp, "%s(burst %d) ", p->name, p->burst);
+    }
+    fprintf(ofp, "}\n");
+}
