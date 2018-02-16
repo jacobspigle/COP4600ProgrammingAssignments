@@ -14,10 +14,11 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     process *currentProcess = NULL;
 
     for(int timer=0; timer<runfor; timer++) {
+        printf("%d\n", timer);
         // Queue up new arrivals
         while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
             processes[processIndex].timeStamp = timer;
-            processes[processIndex].remainingTime = processes[processIndex].burst;
+            processes[processIndex].initialBurst = processes[processIndex].burst;
 
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
             enqueue(&q, &processes[processIndex], numProcesses);
@@ -29,18 +30,18 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
 
         // run process for 1 time unit
         if(currentProcess != NULL) {
-            if(currentProcess->remainingTime <= 0) {
+            if(currentProcess->burst <= 0) {
                 fprintf(stderr, "Process remaining time invalid.\n");
                 return;
             }
 
-            currentProcess->remainingTime--;
+            currentProcess->burst--;
 
-            processComplete = currentProcess->remainingTime == 0;
+            processComplete = (currentProcess->burst == 0);
             if(processComplete) {
                 // calculate turnaround and wait for completed process
                 currentProcess->turnaround = timer - currentProcess->arrival;
-                currentProcess->wait = currentProcess->turnaround - currentProcess->burst;
+                currentProcess->wait = currentProcess->turnaround - currentProcess->initialBurst;
 
                 printStatusLine(ofp, timer, currentProcess, "finished");
             }
@@ -55,13 +56,14 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
             // get next process
             currentProcess = dequeue(&q, numProcesses);
             quantumTimer = quantum;
+
+            if(currentProcess != NULL) {
+                printStatusLine(ofp, timer, currentProcess, "selected");
+            }
         }
 
         if(currentProcess == NULL) {
             printStatusLine(ofp, timer, currentProcess, "idle");
-        }
-        else {
-            printStatusLine(ofp, timer, currentProcess, "selected");
         }
     }
 
