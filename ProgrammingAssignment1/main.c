@@ -140,7 +140,7 @@ void printAlgLine(FILE *fp, int alg)
     switch(alg)
     {
         case ALG_FCFS:
-            fprintf(fp, "First-Come-First-Served");
+            fprintf(fp, "First Come First Served");
             break;
         
         case ALG_P_SHORTEST:
@@ -154,8 +154,6 @@ void printAlgLine(FILE *fp, int alg)
         default:
             fprintf(fp, "ERROR");
     }
-
-    fprintf(fp, "\n");
 }
 
 //call this function inside ****.c
@@ -166,7 +164,7 @@ void printStatusLine(FILE *ofp, int time, process *p, char *state)
         return;
     }
     
-    fprintf(ofp, "Time %d:", time);
+    fprintf(ofp, "Time %d: ", time);
 
     if (strcmp(state, "idle"))
     {
