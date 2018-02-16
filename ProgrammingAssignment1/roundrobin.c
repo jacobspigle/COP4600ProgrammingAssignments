@@ -9,49 +9,52 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
     q.count = 0;
 
     int processIndex = 0;
-
-    for(int i = 0; i < numProcesses; i++) {
-        processes[i].wait = 0;
-        processes[i].turnaround = 0;
-    }
+    int quantumTimer = quantum;
 
     process *currentProcess = NULL;
 
     for(int timer=0; timer<runfor; timer++) {
+        // Queue up new arrivals
         while(processIndex < numProcesses && processes[processIndex].arrival == timer) {
-            int id = processes[processIndex].id;
+            processes[processIndex].timeStamp = timer;
+            processes[processIndex].remainingTime = processes[processIndex].burst;
 
-            processes[processIndex].lastTimeCheck = timer;
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
             enqueue(&q, &processes[processIndex], numProcesses);
             processIndex++;
         }
 
-        bool processComplete = currentProcess->burst == 0;
-        if(processComplete) {
-            printStatusLine(ofp, timer, currentProcess, "finished");
+        quantumTimer--;
+        bool processComplete = false;
+
+        // run process for 1 time unit
+        if(currentProcess != NULL) {
+            if(currentProcess->remainingTime <= 0) {
+                fprintf(stderr, "Process remaining time invalid.\n");
+                return;
+            }
+
+            currentProcess->remainingTime--;
+
+            processComplete = currentProcess->remainingTime == 0;
+            if(processComplete) {
+                // calculate turnaround and wait for completed process
+                currentProcess->turnaround = timer - currentProcess->arrival;
+                currentProcess->wait = currentProcess->turnaround - currentProcess->burst;
+
+                printStatusLine(ofp, timer, currentProcess, "finished");
+            }
         }
 
-        if(processComplete || timer % quantum == 0) {
-            // accumulate time spent running in turnaround slot
-            processes[currentProcess->id].turnaround += (timer - currentProcess->lastTimeCheck);
-            currentProcess->lastTimeCheck = timer;
-
-            // if the process has more burst, queue it back up
-            if(!processComplete) {
+        if(processComplete || quantumTimer == 0) {
+            // If process is not complete, requeue
+            if(currentProcess != NULL && !processComplete) {
                 enqueue(&q, currentProcess, numProcesses);
             }
 
-            // get next process and see if this is its first time running
+            // get next process
             currentProcess = dequeue(&q, numProcesses);
-            printStatusLine(ofp, timer, currentProcess, "selected");
-
-            // accumulate time spent waiting in wait slot and turnaround slot
-            int timeSinceLastSelected = (timer - currentProcess->lastTimeCheck);
-            processes[currentProcess->id].wait += timeSinceLastSelected;
-            processes[currentProcess->id].turnaround += timeSinceLastSelected;
-
-            currentProcess->lastTimeCheck = timer;
+            quantumTimer = quantum;
         }
 
         if(currentProcess == NULL) {
