@@ -19,9 +19,9 @@ typedef struct process {
     int id;
     char name[100];
     int arrival;
+    int initialBurst;
     int burst;
 
-    // values to modify
     int remainingTime;
     int wait;
     int turnaround;
