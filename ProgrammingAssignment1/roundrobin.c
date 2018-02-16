@@ -33,6 +33,8 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
         }
         else {
             if(currentProcess->burst == 0) {
+                currentProcess->turnaround = timer - currentProcess->arrival;
+                currentProcess->wait = currentProcess->turnaround - currentProcess->initialBurst;
                 printStatusLine(ofp, timer, currentProcess, "finished");
                 getNext = true;
             }
