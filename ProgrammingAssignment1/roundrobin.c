@@ -22,7 +22,7 @@ void runRoundRobin(FILE *ofp, process *processes, int numProcesses, int runfor, 
             processes[processIndex].initialBurst = processes[processIndex].burst;
 
             printStatusLine(ofp, timer, &processes[processIndex], "arrived");
-            enqueue(&q, &processes[processIndex], numProcesses);
+            enqueue(&q, &processes[processIndex]);
             processIndex++;
         }
         
