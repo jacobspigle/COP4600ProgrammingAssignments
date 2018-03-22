@@ -1,0 +1,1 @@
+cmd_/home/jacobspigle/modtest/characterDeviceDriver.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/jacobspigle/modtest/characterDeviceDriver.ko /home/jacobspigle/modtest/characterDeviceDriver.o /home/jacobspigle/modtest/characterDeviceDriver.mod.o
