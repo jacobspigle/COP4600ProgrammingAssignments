@@ -36,17 +36,21 @@ int init_module(void) {
 		printk(KERN_ALERT "Device registration failed: %d\n", majorNumber);
 		return majorNumber;
 	}
-
-	printk(KERN_INFO "Character device driver majorNumber: %d", majorNumber);
-	printk(KERN_INFO "To create dev file: 'mknod /dev/%s c %d 0'\n", DEVICE_NAME, majorNumber);
+	printk(KERN_INFO "I was assigned major number %d. To talk to\n", majorNumber);
+	printk(KERN_INFO "the driver, create a dev file with\n");
+	printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, majorNumber);
+	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
+	printk(KERN_INFO "the device file.\n");
+	printk(KERN_INFO "Remove the device file and module when done.\n");
 
 	return SUCCESS;
 }
 void cleanup_module(void) {
 	printk(KERN_INFO "Removing module.\n");
+	 unregister_chrdev(majorNumber, DEVICE_NAME);
 }
-static int device_open(struct inode *inode, struct file *file)
-{
+static int device_open(struct inode *inode, struct file *file){
+	printk(KERN_INFO "Hello potion seller.\n");
 	return 0;
 }
 static int device_release(struct inode *inode, struct file *file)

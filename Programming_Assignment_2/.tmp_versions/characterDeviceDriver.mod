@@ -1,2 +1,2 @@
-/home/jacobspigle/modtest/characterDeviceDriver.ko
-/home/jacobspigle/modtest/characterDeviceDriver.o
+/home/hunter/Documents/COP4600ProgrammingAssignments/Programming_Assignment_2/characterDeviceDriver.ko
+/home/hunter/Documents/COP4600ProgrammingAssignments/Programming_Assignment_2/characterDeviceDriver.o
