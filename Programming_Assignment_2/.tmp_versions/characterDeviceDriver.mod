@@ -1,2 +1,0 @@
-/home/hunter/Documents/COP4600ProgrammingAssignments/Programming_Assignment_2/characterDeviceDriver.ko
-/home/hunter/Documents/COP4600ProgrammingAssignments/Programming_Assignment_2/characterDeviceDriver.o
