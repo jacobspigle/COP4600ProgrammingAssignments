@@ -1,1 +1,0 @@
-cmd_/home/jacobspigle/modtest/tinymod.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/jacobspigle/modtest/tinymod.ko /home/jacobspigle/modtest/tinymod.o /home/jacobspigle/modtest/tinymod.mod.o
