@@ -73,15 +73,15 @@ static int device_release(struct inode *inode, struct file *file){
 
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
-    int num_read = queueLen;
+    int num_read = 0;
     int buffer_space = BUFFER_SIZE - queueLen;
 
     if(length > buffer_space) {
         length = buffer_space;
     }
 
-	while(queueLen) {
-	    put_user(queue[head], buffer);
+	while(queueLen && num_read < length) {
+	    put_user(queue[head], buffer++);
 	    queueLen--;
 	    num_read++;
 	    head = (head + 1) % BUFFER_SIZE;
