@@ -40,8 +40,7 @@ int init_module(void) {
     printk(KERN_INFO "I was assigned major number %d. To talk to\n", majorNumber);
     printk(KERN_INFO "the driver, create a dev file with\n");
     printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, majorNumber);
-    printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
-    printk(KERN_INFO "the device file.\n");
+    printk(KERN_INFO "Try to cat and echo to the device file.\n");
     printk(KERN_INFO "Remove the device file and module when done.\n");
 
     return SUCCESS;
@@ -73,10 +72,9 @@ static int device_release(struct inode *inode, struct file *file){
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
     int num_read = 0;
-    int buffer_space = BUFFER_SIZE - queueLen;
 
-    if(length > buffer_space) {
-        length = buffer_space;
+    if(length > queueLen) {
+        length = queueLen;
     }
 
 	while(queueLen && num_read < length) {
@@ -98,6 +96,10 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 {
     int buffer_space = BUFFER_SIZE - queueLen;
     int i;
+
+    if (buffer_space <= 0)
+    	return length;
+
     if(length > buffer_space) {
         length = buffer_space;
     }
