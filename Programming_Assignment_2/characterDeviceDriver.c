@@ -15,10 +15,14 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
 #define BUFFER_SIZE 1024
 
 static int majorNumber;
-static bool deviceOpen = false;
+static int deviceOpen = 0;
 
 static char queue[BUFFER_SIZE];
 static char *queue_ptr;
+static int queueLen = 0;
+
+static char message[256] = {0};
+static short messageSize;
 
 static struct file_operations fops = {
 	.read = device_read,
@@ -50,18 +54,43 @@ void cleanup_module(void) {
 	 unregister_chrdev(majorNumber, DEVICE_NAME);
 }
 static int device_open(struct inode *inode, struct file *file){
+	if (deviceOpen){
+		return -EBUSY;
+	}
+
+	deviceOpen++;
+	queue_ptr = queue;
+	try_module_get(THIS_MODULE);
+
 	printk(KERN_INFO "Hello potion seller.\n");
 	return 0;
 }
-static int device_release(struct inode *inode, struct file *file)
-{
+static int device_release(struct inode *inode, struct file *file){
+	deviceOpen--;
+	module_put(THIS_MODULE);
+
 	return 0;
 }
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
+	int error_count = 0;
+
+	error_count = copy_to_user(buffer, message, messageSize);
+
+	if (error_count==0){
+		printk(KERN_INFO "chardev: sent %d characters\n", messageSize);
+		return (messageSize = 0);
+	}
+	else {
+		printk(KERN_INFO "chardev: failed to send %d characters\n", error_count);
+		return -EFAULT;
+	}
 	return 0;
 }
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
-	return 0;
+	sprintf(message, "%s(%zu letters)", buffer, length);
+	messageSize = strlen(message);
+	printk(KERN_INFO "chardev: received %zu characters\n", length);
+	return length;
 }
