@@ -59,38 +59,41 @@ static int device_open(struct inode *inode, struct file *file){
     deviceOpen++;
     try_module_get(THIS_MODULE);
 
-    printk(KERN_INFO "Hello potion seller.\n");
+    printk(KERN_INFO "Device Opened.\n");
     return 0;
 }
 static int device_release(struct inode *inode, struct file *file){
     deviceOpen--;
     module_put(THIS_MODULE);
 
+    printk(KERN_INFO "Device Released.\n");
+
     return 0;
 }
 
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
+    int num_read = queueLen;
     int buffer_space = BUFFER_SIZE - queueLen;
-    int i;
+
     if(length > buffer_space) {
         length = buffer_space;
     }
 
-    printk(KERN_INFO "Length of message: %d", length);
+	while(queueLen) {
+	    put_user(queue[head], buffer);
+	    queueLen--;
+	    num_read++;
+	    head = (head + 1) % BUFFER_SIZE;
+	}
 
-    for(i=0; i<length; i++) {
-        output_buffer[i] = queue[(head + i) % BUFFER_SIZE];
-    }
+    // copy_to_user(buffer, output_buffer, num_read);
 
-    copy_to_user(buffer, output_buffer, length);
+    // head = (head + num_read) % BUFFER_SIZE;
+    // queueLen = 0;
 
-    head = (head + length) % BUFFER_SIZE;
-    queueLen -= length;
-
-    printk(KERN_INFO "chardev: sent %d characters\n", length);
-
-    return length;
+    printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
+    return num_read;
 }
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
@@ -106,6 +109,6 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     queueLen += length;
 
-    printk(KERN_INFO "chardev: received %zu characters\n", length);
+    printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
 }
