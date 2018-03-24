@@ -18,7 +18,6 @@ static int majorNumber;
 static int deviceOpen = 0;
 
 static char queue[BUFFER_SIZE];
-static char output_buffer[BUFFER_SIZE];
 static int head = 0;
 static int queueLen = 0;
 
