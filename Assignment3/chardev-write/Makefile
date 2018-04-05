@@ -1,4 +1,4 @@
-obj-m += characterDeviceDriver.o
+obj-m += chardev-write.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
