@@ -2,6 +2,7 @@
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include <linux/mutex.h>
 
 int init_module(void);
 void cleanup_module(void);
@@ -17,9 +18,11 @@ static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
-static char queue[BUFFER_SIZE];
-static int head = 0;
-static int queueLen = 0;
+extern char queue[BUFFER_SIZE];
+extern int head = 0;
+extern int queueLen = 0;
+
+extern struct mutex queue_mutex;
 
 static struct file_operations fops = {
     .read = device_read,
@@ -42,6 +45,9 @@ int init_module(void) {
     printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, majorNumber);
     printk(KERN_INFO "Try to cat and echo to the device file.\n");
     printk(KERN_INFO "Remove the device file and module when done.\n");
+
+    // init mutex
+    mutex_init(&my_mutex);
 
     return SUCCESS;
 }
@@ -73,6 +79,8 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
 {
     int num_read = 0;
 
+    mutex_lock(&queue_mutex);
+
     if(length > queueLen) {
         length = queueLen;
     }
@@ -84,16 +92,15 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
 	    head = (head + 1) % BUFFER_SIZE;
 	}
 
-    // copy_to_user(buffer, output_buffer, num_read);
-
-    // head = (head + num_read) % BUFFER_SIZE;
-    // queueLen = 0;
+    mutex_unlock(&queue_mutex);
 
     printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
     return num_read;
 }
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
+    mutex_lock(&queue_mutex);
+    
     int buffer_space = BUFFER_SIZE - queueLen;
     int i;
 
@@ -109,6 +116,8 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
     }
 
     queueLen += length;
+
+    mutex_unlock(&queue_mutex);
 
     printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
