@@ -23,7 +23,7 @@ char queue[BUFFER_SIZE];
 int head = 0;
 int queueLen = 0;
 
-// struct mutex queue_mutex;
+struct mutex queue_mutex;
 
 static struct file_operations fops = {
     .write = device_write,
