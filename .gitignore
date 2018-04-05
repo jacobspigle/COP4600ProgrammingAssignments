@@ -21,3 +21,5 @@ modules.builtin
 *.lzo
 *.patch
 *.gcno
+Programming_Assignment_2/Programming_Assignment_2.zip
+.gitignore
