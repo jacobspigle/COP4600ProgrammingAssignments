@@ -19,6 +19,12 @@ static ssize_t device_read(struct file *, char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
+char queue[BUFFER_SIZE];
+int head = 0;
+int queueLen = 0;
+
+struct mutex queue_mutex;
+
 static struct file_operations fops = {
     .read = device_read,
     .open = device_open,
@@ -40,6 +46,9 @@ extern int init_module(void) {
     printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, majorNumber);
     printk(KERN_INFO "Try to cat and echo to the device file.\n");
     printk(KERN_INFO "Remove the device file and module when done.blah\n");
+
+    // init mutex
+    mutex_init(&queue_mutex);
 
     return SUCCESS;
 }
