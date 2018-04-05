@@ -17,9 +17,11 @@ static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
-static char queue[BUFFER_SIZE];
-static int head = 0;
-static int queueLen = 0;
+extern char *queue;
+extern int head;
+extern int queueLen;
+
+extern struct mutex queue_mutex;
 
 static struct file_operations fops = {
     .read = device_read,
@@ -73,6 +75,8 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
 {
     int num_read = 0;
 
+    mutex_lock(&queue_mutex);
+
     if(length > queueLen) {
         length = queueLen;
     }
@@ -84,32 +88,8 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
 	    head = (head + 1) % BUFFER_SIZE;
 	}
 
-    // copy_to_user(buffer, output_buffer, num_read);
-
-    // head = (head + num_read) % BUFFER_SIZE;
-    // queueLen = 0;
+    mutex_unlock(&queue_mutex);
 
     printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
     return num_read;
 }
-// static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
-// {
-//     int buffer_space = BUFFER_SIZE - queueLen;
-//     int i;
-
-//     if (buffer_space <= 0)
-//     	return length;
-
-//     if(length > buffer_space) {
-//         length = buffer_space;
-//     }
-
-//     for(i=0; i<length; i++) {
-//         queue[(head + queueLen + i) % BUFFER_SIZE] = buffer[i];
-//     }
-
-//     queueLen += length;
-
-//     printk(KERN_INFO "Device Write: received %zu characters\n", length);
-//     return length;
-// }
