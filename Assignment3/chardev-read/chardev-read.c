@@ -6,8 +6,8 @@
 
 #include "../chardev.h"
 
-static int init_module(void);
-static void cleanup_module(void);
+extern int init_module(void);
+extern void cleanup_module(void);
 static int device_open(struct inode *, struct file* );
 static int device_release(struct inode *, struct file* );
 static ssize_t device_read(struct file *, char* , size_t, loff_t *);
@@ -25,7 +25,7 @@ static struct file_operations fops = {
     .release = device_release,
 };
 
-static int init_module(void) {
+extern int init_module(void) {
     printk(KERN_INFO "Installing module.\n");
 
     majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
@@ -34,16 +34,17 @@ static int init_module(void) {
         printk(KERN_ALERT "Device registration failed: %d\n", majorNumber);
         return majorNumber;
     }
+
     printk(KERN_INFO "I was assigned major number %d. To talk to\n", majorNumber);
     printk(KERN_INFO "the driver, create a dev file with\n");
     printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, majorNumber);
     printk(KERN_INFO "Try to cat and echo to the device file.\n");
-    printk(KERN_INFO "Remove the device file and module when done.\n");
+    printk(KERN_INFO "Remove the device file and module when done.blah\n");
 
     return SUCCESS;
 }
 
-static void cleanup_module(void) {
+extern void cleanup_module(void) {
     printk(KERN_INFO "Removing module.\n");
      unregister_chrdev(majorNumber, DEVICE_NAME);
 }
