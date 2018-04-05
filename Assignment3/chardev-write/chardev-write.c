@@ -6,8 +6,8 @@
 
 #include "../chardev.h"
 
-int init_module(void);
-void cleanup_module(void);
+static int init_module(void);
+static void cleanup_module(void);
 static int device_open(struct inode *, struct file* );
 static int device_release(struct inode *, struct file* );
 static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
@@ -31,7 +31,7 @@ static struct file_operations fops = {
     .release = device_release,
 };
 
-int init_module(void) {
+static int init_module(void) {
     printk(KERN_INFO "Installing module.\n");
 
     majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
@@ -51,10 +51,12 @@ int init_module(void) {
 
     return SUCCESS;
 }
-void cleanup_module(void) {
+
+static void cleanup_module(void) {
     printk(KERN_INFO "Removing module.\n");
      unregister_chrdev(majorNumber, DEVICE_NAME);
 }
+
 static int device_open(struct inode *inode, struct file *file){
     if (deviceOpen){
         return -EBUSY;
