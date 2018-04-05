@@ -4,11 +4,12 @@
 #include <asm/uaccess.h>
 #include <linux/mutex.h>
 
+#include "../chardev.h"
+
 int init_module(void);
 void cleanup_module(void);
 static int device_open(struct inode *, struct file* );
 static int device_release(struct inode *, struct file* );
-static ssize_t device_read(struct file *, char* , size_t, loff_t *);
 static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 
 #define SUCCESS 0
@@ -18,14 +19,13 @@ static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
-extern char queue[BUFFER_SIZE];
-extern int head = 0;
-extern int queueLen = 0;
+char queue[BUFFER_SIZE];
+int head = 0;
+int queueLen = 0;
 
-extern struct mutex queue_mutex;
+// struct mutex queue_mutex;
 
 static struct file_operations fops = {
-    .read = device_read,
     .write = device_write,
     .open = device_open,
     .release = device_release,
@@ -47,7 +47,7 @@ int init_module(void) {
     printk(KERN_INFO "Remove the device file and module when done.\n");
 
     // init mutex
-    mutex_init(&my_mutex);
+    mutex_init(&queue_mutex);
 
     return SUCCESS;
 }
@@ -77,10 +77,12 @@ static int device_release(struct inode *inode, struct file *file){
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
-    mutex_lock(&queue_mutex);
-    
-    int buffer_space = BUFFER_SIZE - queueLen;
+    int buffer_space;
     int i;
+
+    mutex_lock(&queue_mutex);
+
+    buffer_space = BUFFER_SIZE - queueLen;
 
     if (buffer_space <= 0)
     	return length;

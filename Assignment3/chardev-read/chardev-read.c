@@ -2,13 +2,15 @@
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include <linux/mutex.h>
+
+#include "../chardev.h"
 
 int init_module(void);
 void cleanup_module(void);
 static int device_open(struct inode *, struct file* );
 static int device_release(struct inode *, struct file* );
 static ssize_t device_read(struct file *, char* , size_t, loff_t *);
-static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 
 #define SUCCESS 0
 #define DEVICE_NAME "chardev-read"
@@ -17,15 +19,8 @@ static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
-extern char *queue;
-extern int head;
-extern int queueLen;
-
-extern struct mutex queue_mutex;
-
 static struct file_operations fops = {
     .read = device_read,
-    .write = device_write,
     .open = device_open,
     .release = device_release,
 };
