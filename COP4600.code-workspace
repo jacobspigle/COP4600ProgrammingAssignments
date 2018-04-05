@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "ProgrammingAssignment1"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"processors.h": "c"
+		}
+	}
+}
