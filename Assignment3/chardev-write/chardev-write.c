@@ -86,10 +86,6 @@ static int device_release(struct inode *inode, struct file *file){
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
-    #ifndef WRITE_FIRST_TIME
-    #define WRITE_FIRST_TIME
-    #endif
-
     int buffer_space;
     int i;
 
