@@ -71,25 +71,27 @@ static int device_release(struct inode *inode, struct file *file){
 
 static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_t *offset)
 {
-    int num_read = 0;
+    #ifdef WRITE_FIRST_TIME
+        int num_read = 0;
 
-    mutex_lock(&queue_mutex);
+        mutex_lock(&queue_mutex);
 
-    if(length > queueLen) {
-        length = queueLen;
-    }
+        if(length > queueLen) {
+            length = queueLen;
+        }
 
-    while(queueLen && num_read < length) {
-        put_user(queue[head], buffer++);
-        queueLen--;
-        num_read++;
-        head = (head + 1) % BUFFER_SIZE;
-    }
+        while(queueLen && num_read < length) {
+            put_user(queue[head], buffer++);
+            queueLen--;
+            num_read++;
+            head = (head + 1) % BUFFER_SIZE;
+        }
 
-    mutex_unlock(&queue_mutex);
+        mutex_unlock(&queue_mutex);
 
-    printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
-    return num_read;
+        printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
+        return num_read;
+    #endif
 
     return 0;
 }
