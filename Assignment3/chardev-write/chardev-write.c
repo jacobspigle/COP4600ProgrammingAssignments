@@ -6,29 +6,17 @@
 
 #include "../chardev.h"
 
-#ifndef WRITE_CALLED
-#define WRITE_CALLED
+extern int init_module(void);
+extern void cleanup_module(void);
+static int device_open(struct inode *, struct file* );
+static int device_release(struct inode *, struct file* );
+static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 
-    extern int init_module(void);
-    extern void cleanup_module(void);
-    static int device_open(struct inode *, struct file* );
-    static int device_release(struct inode *, struct file* );
-    static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
+#define SUCCESS 0
+#define DEVICE_NAME "chardev-write"
 
-    #define SUCCESS 0
-    #define DEVICE_NAME "chardev-write"
-    #define BUFFER_SIZE 1024
-
-    static int majorNumber;
-    static int deviceOpen = 0;
-
-    char queue[BUFFER_SIZE];
-    int head = 0;
-    int queueLen = 0;
-
-    struct mutex queue_mutex;
-
-#endif
+static int majorNumber;
+static int deviceOpen = 0;
 
 static struct file_operations fops = {
     .write = device_write,
