@@ -4,7 +4,7 @@
 #include <asm/uaccess.h>
 #include <linux/mutex.h>
 
-#include "../chardev.h"
+// #include "../chardev.h"
 
 extern int init_module(void);
 extern void cleanup_module(void);
