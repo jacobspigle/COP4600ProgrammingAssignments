@@ -41,9 +41,6 @@ extern int init_module(void) {
     printk(KERN_INFO "Try to cat and echo to the device file.\n");
     printk(KERN_INFO "Remove the device file and module when done.blah\n");
 
-    // init mutex
-    mutex_init(&queue_mutex);
-
     return SUCCESS;
 }
 
