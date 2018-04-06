@@ -93,8 +93,10 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     buffer_space = BUFFER_SIZE - queueLen;
 
-    if (buffer_space <= 0)
+    if (buffer_space <= 0) {
+        mutex_unlock(&queue_mutex);
     	return length;
+    }
 
     if(length > buffer_space) {
         length = buffer_space;
