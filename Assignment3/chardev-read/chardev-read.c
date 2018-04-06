@@ -73,21 +73,27 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
 {
     int num_read = 0;
 
-    mutex_lock(&queue_mutex);
+    #ifdef WRITE_CALLED
 
-    if(length > queueLen) {
-        length = queueLen;
-    }
+        mutex_lock(&queue_mutex);
 
-	while(queueLen && num_read < length) {
-	    put_user(queue[head], buffer++);
-	    queueLen--;
-	    num_read++;
-	    head = (head + 1) % BUFFER_SIZE;
-	}
+        if(length > queueLen) {
+            length = queueLen;
+        }
 
-    mutex_unlock(&queue_mutex);
+        while(queueLen && num_read < length) {
+            put_user(queue[head], buffer++);
+            queueLen--;
+            num_read++;
+            head = (head + 1) % BUFFER_SIZE;
+        }
 
-    printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
-    return num_read;
+        mutex_unlock(&queue_mutex);
+
+        printk(KERN_INFO "Device Read: sent %d characters\n", num_read);
+        return num_read;
+
+    #endif
+
+    return 0;
 }
