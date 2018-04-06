@@ -1,4 +1,0 @@
-0xc9c2cc43	queueLen	/home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment3/chardev-write/chardev-write	EXPORT_SYMBOL
-0xf97a5563	queue	/home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment3/chardev-write/chardev-write	EXPORT_SYMBOL
-0x1a737417	head	/home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment3/chardev-write/chardev-write	EXPORT_SYMBOL
-0x15fc7dc5	queue_mutex	/home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment3/chardev-write/chardev-write	EXPORT_SYMBOL
