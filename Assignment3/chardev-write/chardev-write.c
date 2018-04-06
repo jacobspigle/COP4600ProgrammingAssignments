@@ -24,6 +24,11 @@ char queue[BUFFER_SIZE];
 int head = 0;
 int queueLen = 0;
 struct mutex queue_mutex;
+
+EXPORT_SYMBOL(queue);
+EXPORT_SYMBOL(head);
+EXPORT_SYMBOL(queueLen);
+EXPORT_SYMBOL(queue_mutex);
 // end of fucky stuff
 
 
@@ -84,7 +89,7 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
     #ifndef WRITE_FIRST_TIME
     #define WRITE_FIRST_TIME
     #endif
-    
+
     int buffer_space;
     int i;
 
