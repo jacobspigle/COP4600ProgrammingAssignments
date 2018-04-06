@@ -14,9 +14,18 @@ static ssize_t device_write(struct file *, const char* , size_t, loff_t *);
 
 #define SUCCESS 0
 #define DEVICE_NAME "chardev-write"
+#define BUFFER_SIZE 1024
 
 static int majorNumber;
 static int deviceOpen = 0;
+
+// fucky stuff
+char queue[BUFFER_SIZE];
+int head = 0;
+int queueLen = 0;
+struct mutex queue_mutex;
+// end of fucky stuff
+
 
 static struct file_operations fops = {
     .write = device_write,
