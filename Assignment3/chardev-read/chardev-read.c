@@ -19,12 +19,6 @@ static ssize_t device_read(struct file *, char* , size_t, loff_t *);
 static int majorNumber;
 static int deviceOpen = 0;
 
-char *queue;
-int head;
-int queueLen;
-
-struct mutex queue_mutex;
-
 static struct file_operations fops = {
     .read = device_read,
     .open = device_open,
