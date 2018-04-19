@@ -86,6 +86,8 @@ static ssize_t device_read(struct file *file, char *buffer, size_t length, loff_
         head = (head + 1) % BUFFER_SIZE;
     }
 
+    chars_checked_index = 0;
+
     mutex_unlock(&queue_mutex);
 
     printk(KERN_INFO "Device Read: sent %d characters\n", num_read);

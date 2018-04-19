@@ -29,6 +29,8 @@ const char *ucf_string = "Undefeated 2018 National Champions UCF";
 const int ucf_length = 38;
 int chars_checked_index = 0;
 
+
+EXPORT_SYMBOL(chars_checked_index);
 EXPORT_SYMBOL(queue);
 EXPORT_SYMBOL(head);
 EXPORT_SYMBOL(queueLen);
@@ -88,15 +90,41 @@ static int device_release(struct inode *inode, struct file *file){
     return 0;
 }
 
-static void test()
+static void replaceUCF(void)
 {
-    printk(KERN_INFO "?????\n");
+    int i;
+    int skip = 0;
+    int index_U, index_C, index_F;
+    int index;
+
+    for(i=0; i<(queueLen - chars_checked_index); i++) {
+        index_U = (head + chars_checked_index) % BUFFER_SIZE;
+        index_C = (index_U + 1) % BUFFER_SIZE;
+        index_F = (index_F + 1) % BUFFER_SIZE;
+
+        index = index_U;
+
+        if(index_U == head || index_C == head || index_F == head) {
+            return;
+        }
+
+        if(index_U == 'U' && index_C == 'C' && index_F == 'F') {
+            index = index_U;
+
+            while(index != head && index != ucf_length)
+            {
+                queue[index] = ucf_string[i];
+                queueLen++;
+                index = (index + 1) % BUFFER_SIZE;
+            }
+        }
+    }
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
     int buffer_space;
-    int i, j;
+    int i;
 
     mutex_lock(&queue_mutex);
 
@@ -117,9 +145,9 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     queueLen += length;
 
-    mutex_unlock(&queue_mutex);
+    replaceUCF();
 
-    test();
+    mutex_unlock(&queue_mutex);
 
     printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
