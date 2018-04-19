@@ -119,6 +119,7 @@ static void replaceUCF(void)
             }
         }
     }
+
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
