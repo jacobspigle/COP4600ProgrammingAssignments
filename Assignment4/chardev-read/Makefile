@@ -1,4 +1,4 @@
-KBUILD_EXTRA_SYMBOLS := /home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment3/chardev-write/Module.symvers
+KBUILD_EXTRA_SYMBOLS := /home/jacobspigle/Documents/COP4600/COP4600ProgrammingAssignments/Assignment4/chardev-write/Module.symvers
 obj-m += chardev-read.o
 
 all:
