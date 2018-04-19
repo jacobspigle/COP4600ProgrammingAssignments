@@ -108,7 +108,7 @@ static void replaceUCF(void)
             return;
         }
 
-        if(index_U == 'U' && index_C == 'C' && index_F == 'F') {
+        if(queue[index_U] == 'U' && queue[index_C] == 'C' && queue[index_F] == 'F') {
             printk(KERN_INFO "\n\nTEST LOOK AT ME!!!!!\n\n");
 
             index = index_U;
@@ -121,7 +121,7 @@ static void replaceUCF(void)
             }
         }
         else {
-            printk(KERN_INFO "\n\nawwww...\n\n");
+            printk(KERN_INFO "\n\nchars: %c %c %c\n\n", queue[index_U], queue[index_C], queue[index_F]);
         }
     }
 
