@@ -27,14 +27,14 @@ struct mutex queue_mutex;
 
 const char *ucf_string = "Undefeated 2018 National Champions UCF";
 const int ucf_length = 38;
-int chars_checked_index = 0;
+int num_chars_checked = 0;
 
 
 EXPORT_SYMBOL(queue);
 EXPORT_SYMBOL(head);
 EXPORT_SYMBOL(queueLen);
 EXPORT_SYMBOL(queue_mutex);
-EXPORT_SYMBOL(chars_checked_index);
+EXPORT_SYMBOL(num_chars_checked);
 // end of fucky stuff
 
 
@@ -97,8 +97,8 @@ static void replaceUCF(void)
     int index_U, index_C, index_F;
     int index;
 
-    for(i=0; i<(queueLen - chars_checked_index); i++) {
-        index_U = (head + chars_checked_index) % BUFFER_SIZE;
+    for(i=0; i<(queueLen - num_chars_checked); i++) {
+        index_U = (head + num_chars_checked) % BUFFER_SIZE;
         index_C = (index_U + 1) % BUFFER_SIZE;
         index_F = (index_F + 1) % BUFFER_SIZE;
 
@@ -120,6 +120,7 @@ static void replaceUCF(void)
         }
     }
 
+    num_chars_checked = queueLen;
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
