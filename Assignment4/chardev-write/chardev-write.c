@@ -88,6 +88,11 @@ static int device_release(struct inode *inode, struct file *file){
     return 0;
 }
 
+static void test()
+{
+    printk(KERN_INFO "?????\n");
+}
+
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
     int buffer_space;
@@ -118,9 +123,4 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
-}
-
-static void test()
-{
-    printk(KERN_INFO "?????\n");
 }
