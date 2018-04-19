@@ -114,6 +114,8 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     mutex_unlock(&queue_mutex);
 
+    test();
+
     printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
 }
