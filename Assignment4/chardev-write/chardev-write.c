@@ -30,11 +30,11 @@ const int ucf_length = 38;
 int chars_checked_index = 0;
 
 
-EXPORT_SYMBOL(chars_checked_index);
 EXPORT_SYMBOL(queue);
 EXPORT_SYMBOL(head);
 EXPORT_SYMBOL(queueLen);
 EXPORT_SYMBOL(queue_mutex);
+EXPORT_SYMBOL(chars_checked_index);
 // end of fucky stuff
 
 
