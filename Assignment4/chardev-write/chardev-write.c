@@ -100,7 +100,7 @@ static void replaceUCF(void)
     for(i=0; i<(queueLen - num_chars_checked); i++) {
         index_U = (head + num_chars_checked) % BUFFER_SIZE;
         index_C = (index_U + 1) % BUFFER_SIZE;
-        index_F = (index_F + 1) % BUFFER_SIZE;
+        index_F = (index_F + 2) % BUFFER_SIZE;
 
         index = index_U;
 
@@ -109,6 +109,8 @@ static void replaceUCF(void)
         }
 
         if(index_U == 'U' && index_C == 'C' && index_F == 'F') {
+            printk(KERN_INFO "\n\nTEST LOOK AT ME!!!!!\n\n");
+
             index = index_U;
 
             while(index != head && index != ucf_length)
