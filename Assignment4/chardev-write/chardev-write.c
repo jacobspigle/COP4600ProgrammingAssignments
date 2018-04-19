@@ -25,6 +25,10 @@ int head = 0;
 int queueLen = 0;
 struct mutex queue_mutex;
 
+const char *ucf_string = "Undefeated 2018 National Champions UCF";
+const int ucf_length = 38;
+int chars_checked_index = 0;
+
 EXPORT_SYMBOL(queue);
 EXPORT_SYMBOL(head);
 EXPORT_SYMBOL(queueLen);
@@ -87,7 +91,7 @@ static int device_release(struct inode *inode, struct file *file){
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
 {
     int buffer_space;
-    int i;
+    int i, j;
 
     mutex_lock(&queue_mutex);
 
@@ -112,4 +116,9 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
 
     printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
+}
+
+static void test()
+{
+    printk(KERN_INFO "?????\n");
 }
