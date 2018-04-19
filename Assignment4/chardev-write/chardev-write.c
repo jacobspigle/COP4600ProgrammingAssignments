@@ -120,6 +120,9 @@ static void replaceUCF(void)
                 index = (index + 1) % BUFFER_SIZE;
             }
         }
+        else {
+            printk(KERN_INFO "\n\nawwww...\n\n");
+        }
     }
 
     num_chars_checked = queueLen;
