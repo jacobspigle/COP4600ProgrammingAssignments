@@ -92,7 +92,7 @@ static int device_release(struct inode *inode, struct file *file){
 
 static void replaceUCF(void)
 {
-    int i;
+    int i, j;
     int index_U, index_C, index_F;
     int index, ucf_chars_written = 0;
     
@@ -114,10 +114,11 @@ static void replaceUCF(void)
             printk(KERN_INFO "\n\nTEST LOOK AT ME!!!!!\n\n");
 
             index = index_U;
+            j = 0;
 
             while(index != head && index != ucf_length)
             {
-                queue[index] = ucf_string[i];
+                queue[index] = ucf_string[i + j];
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
                 ucf_chars_written++;
