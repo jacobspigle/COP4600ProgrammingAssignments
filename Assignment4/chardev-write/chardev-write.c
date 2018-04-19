@@ -151,6 +151,7 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
     }
 
     queueLen += length;
+    printk(KERN_INFO "Qlen is: %d\n", length);
 
     replaceUCF();
 
