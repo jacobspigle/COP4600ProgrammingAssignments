@@ -93,9 +93,8 @@ static int device_release(struct inode *inode, struct file *file){
 static void replaceUCF(void)
 {
     int i;
-    int skip = 0;
     int index_U, index_C, index_F;
-    int index;
+    int index, ucf_chars_written = 0;
     
     printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
     printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
@@ -103,11 +102,11 @@ static void replaceUCF(void)
     for(i=0; i<(queueLen - num_chars_checked); i++) {
         index_U = (head + num_chars_checked) % BUFFER_SIZE;
         index_C = (index_U + 1) % BUFFER_SIZE;
-        index_F = (index_F + 2) % BUFFER_SIZE;
+        index_F = (index_C + 1) % BUFFER_SIZE;
 
         index = index_U;
 
-        if(index_U == head || index_C == head || index_F == head) {
+        if(index_C == head || index_F == head) {
             return;
         }
 
@@ -121,6 +120,7 @@ static void replaceUCF(void)
                 queue[index] = ucf_string[i];
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
+                ucf_chars_written++;
             }
         }
         else {
@@ -128,7 +128,7 @@ static void replaceUCF(void)
         }
     }
 
-    num_chars_checked = queueLen;
+    num_chars_checked += ucf_chars_written;
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
