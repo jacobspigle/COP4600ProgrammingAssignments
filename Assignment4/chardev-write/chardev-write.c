@@ -118,10 +118,11 @@ static void replaceUCF(void)
 
             while(index != head && index != ucf_length)
             {
-                queue[index] = ucf_string[i + j];
+                queue[index] = ucf_string[j];
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
                 ucf_chars_written++;
+                j++;
             }
         }
         else {
