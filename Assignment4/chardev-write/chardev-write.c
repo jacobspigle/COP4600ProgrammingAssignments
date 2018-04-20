@@ -95,6 +95,7 @@ static void replaceUCF(void)
     int i, j;
     int index_U, index_C, index_F;
     int index, ucf_chars_written = 0;
+    int first_loop;
     
     printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
     printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
@@ -115,9 +116,11 @@ static void replaceUCF(void)
 
             index = index_U;
             j = 0;
+            first_loop = 1;
 
-            while(index != head && j < ucf_length)
+            while((first_loop || index != head) && j < ucf_length)
             {
+                first_loop = 0;
                 queue[index] = ucf_string[j];
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
