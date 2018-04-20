@@ -120,7 +120,7 @@ static void replaceUCF(void)
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
                 // head - ucf_length
-                for(k=(head + BUFFER_SIZE - ucf_length) % BUFFER_SIZE; k>index_F; k--) {
+                for(k=(head + BUFFER_SIZE - ucf_length) % BUFFER_SIZE; k!=index_F; k = (k + BUFFER_SIZE - 1) % BUFFER_SIZE) {
                     queue[(k+1) % BUFFER_SIZE] = queue[k];
                 }
             }
