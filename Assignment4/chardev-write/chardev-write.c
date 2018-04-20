@@ -115,7 +115,7 @@ static void replaceUCF(void)
             printk(KERN_INFO "\n\nFound UCF\n\n");
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
-                printk(KERN_INFO "Chars checked before: %d\n", num_chars_checked);
+                printk(KERN_INFO "Chars checked before: %d, next 3: %c %c %c\n", num_chars_checked, queue[num_chars_checked%BUFFER_SIZE], queue[(num_chars_checked+1)%BUFFER_SIZE], queue[(num_chars_checked+2)%BUFFER_SIZE]);
 
                 if((BUFFER_SIZE - queueLen) < ucf_length) {
                     queueLen = BUFFER_SIZE;
