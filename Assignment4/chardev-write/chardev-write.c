@@ -29,7 +29,6 @@ const char *ucf_string = "Undefeated 2018 National Champions UCF";
 const int ucf_length = 38;
 int num_chars_checked = 0;
 
-
 EXPORT_SYMBOL(queue);
 EXPORT_SYMBOL(head);
 EXPORT_SYMBOL(queueLen);
@@ -123,7 +122,7 @@ static void replaceUCF(void)
                 }
                 else {
                     queueLen += ucf_length - 3;
-                    num_chars_checked += ucf_length;
+                    num_chars_checked += ucf_length - 2;
                 }
 
                 // start at last index
