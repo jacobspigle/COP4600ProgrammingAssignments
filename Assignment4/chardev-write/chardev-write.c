@@ -94,7 +94,7 @@ static void replaceUCF(void)
 {
     int i, j, k;
     int index_U, index_C, index_F;
-    int index, ucf_chars_written = 0;
+    int index;
     int first_loop;
     
     printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
@@ -131,14 +131,12 @@ static void replaceUCF(void)
                 queue[index] = ucf_string[j];
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
-                ucf_chars_written++;
-                num_chars_checked++;
                 j++;
             }
         }
     }
 
-    num_chars_checked += ucf_chars_written;
+    num_chars_checked = queueLen - 2;
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
