@@ -151,8 +151,6 @@ static void replaceUCF(void)
             num_chars_checked++;
         }
     }
-
-    num_chars_checked = queueLen - 2;
 }
 
 static ssize_t device_write(struct file *file, const char *buffer, size_t length, loff_t *offset)
