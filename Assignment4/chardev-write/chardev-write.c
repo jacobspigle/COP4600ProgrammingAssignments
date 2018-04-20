@@ -25,7 +25,7 @@ int head = 0;
 int queueLen = 0;
 struct mutex queue_mutex;
 
-const char *ucf_string = "Undefeated 2018 National Champions UCF";
+const char *ucf_string = "Undefeated 2018 National Champions ";
 const int ucf_length = 38;
 int num_chars_checked = 0;
 
