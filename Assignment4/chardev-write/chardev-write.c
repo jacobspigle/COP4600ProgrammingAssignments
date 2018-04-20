@@ -123,9 +123,11 @@ static void replaceUCF(void)
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
                 if((BUFFER_SIZE - queueLen) < ucf_length) {
                     queueLen = BUFFER_SIZE;
+                    num_chars_checked = queueLen - 2;
                 }
                 else {
                     queueLen += ucf_length - 3;
+                    num_chars_checked += ucf_length - 3;
                 }
 
                 // start at last index
@@ -143,8 +145,6 @@ static void replaceUCF(void)
                 index = (index + 1) % BUFFER_SIZE;
                 j++;
             }
-
-            break;
         }
         else {
             num_chars_checked++;
