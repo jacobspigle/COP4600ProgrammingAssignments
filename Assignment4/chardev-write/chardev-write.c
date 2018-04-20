@@ -178,12 +178,12 @@ static ssize_t device_write(struct file *file, const char *buffer, size_t length
     }
 
     queueLen += length;
-    printk(KERN_INFO "device_write Qlen is: %d\n", queueLen);
+    //printk(KERN_INFO "device_write Qlen is: %d\n", queueLen);
 
     replaceUCF();
 
     mutex_unlock(&queue_mutex);
 
-    printk(KERN_INFO "Device Write: received %zu characters\n", length);
+    //printk(KERN_INFO "Device Write: received %zu characters\n", length);
     return length;
 }
