@@ -100,7 +100,7 @@ static void replaceUCF(void)
     printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
     printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
 
-    for(i=0; i<(queueLen - num_chars_checked); i++) {
+    for(i=num_chars_checked; i<queueLen; i++) {
         index_U = (head + i) % BUFFER_SIZE;
         index_C = (index_U + 1) % BUFFER_SIZE;
         index_F = (index_C + 1) % BUFFER_SIZE;
