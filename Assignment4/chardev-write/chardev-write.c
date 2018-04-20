@@ -96,19 +96,21 @@ static void replaceUCF(void)
     int index_U, index_C, index_F;
     int index;
     int first_loop;
+    char temp;
     
     printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
     printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
 
-    for(i=num_chars_checked; i<queueLen; i++) {
-        index_U = (head + i) % BUFFER_SIZE;
+    while(num_chars_checked < queueLen - 2)
+    {
+        index_U = (head + num_chars_checked) % BUFFER_SIZE;
         index_C = (index_U + 1) % BUFFER_SIZE;
         index_F = (index_C + 1) % BUFFER_SIZE;
 
         index = index_U;
 
         if(index_C == head || index_F == head) {
-            return;
+            break;
         }
 
         if(queue[index_U] == 'U' && queue[index_C] == 'C' && queue[index_F] == 'F') {
@@ -119,9 +121,11 @@ static void replaceUCF(void)
             first_loop = 1;
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
-                // head - ucf_length
-                for(k=(head + BUFFER_SIZE - ucf_length) % BUFFER_SIZE; k!=index_F; k = (k + BUFFER_SIZE - 1) % BUFFER_SIZE) {
-                    queue[(k+ucf_length) % BUFFER_SIZE] = queue[k];
+                // start at last index
+                // try to move each character forward by ucf_length
+                // stop when we get to index_U + ucf_length
+                for(k=(head + BUFFER_SIZE + queueLen - 1) % BUFFER_SIZE; k != (index_U + BUFFER_SIZE + ucf_length - 1) % BUFFER_SIZE; k = (k + BUFFER_SIZE - 1) % BUFFER_SIZE) {
+                    queue[k] = queue[(k + BUFFER_SIZE - ucf_length) % BUFFER_SIZE];
                 }
             }
 
@@ -133,6 +137,11 @@ static void replaceUCF(void)
                 index = (index + 1) % BUFFER_SIZE;
                 j++;
             }
+
+            break;
+        }
+        else {
+            num_chars_checked++;
         }
     }
 
