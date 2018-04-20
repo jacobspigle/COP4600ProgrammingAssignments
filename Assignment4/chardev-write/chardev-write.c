@@ -92,7 +92,7 @@ static int device_release(struct inode *inode, struct file *file){
 
 static void replaceUCF(void)
 {
-    int i, j;
+    int i, j, k;
     int index_U, index_C, index_F;
     int index, ucf_chars_written = 0;
     int first_loop;
@@ -117,6 +117,13 @@ static void replaceUCF(void)
             index = index_U;
             j = 0;
             first_loop = 1;
+
+            if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
+                // head - ucf_length
+                for(k=(head + BUFFER_SIZE - ucf_length) % BUFFER_SIZE; k>index_F; k--) {
+                    queue[(k+1) % BUFFER_SIZE] = queue[k];
+                }
+            }
 
             while((first_loop || index != head) && j < ucf_length)
             {
