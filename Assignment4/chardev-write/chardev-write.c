@@ -126,6 +126,7 @@ static void replaceUCF(void)
                 queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
                 ucf_chars_written++;
+                num_chars_checked++;
                 j++;
             }
         }
