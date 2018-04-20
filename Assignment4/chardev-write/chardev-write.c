@@ -107,20 +107,16 @@ static void replaceUCF(void)
         index_C = (index_U + 1) % BUFFER_SIZE;
         index_F = (index_C + 1) % BUFFER_SIZE;
 
-        index = index_U;
-
         if(index_C == head || index_F == head) {
             break;
         }
 
         if(queue[index_U] == 'U' && queue[index_C] == 'C' && queue[index_F] == 'F') {
-            printk(KERN_INFO "\n\nTEST LOOK AT ME!!!!!\n\n");
-
-            index = index_U;
-            j = 0;
-            first_loop = 1;
+            printk(KERN_INFO "\n\nFound UCF\n\n");
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
+                printk(KERN_INFO "Chars checked before: %d\n", num_chars_checked);
+
                 if((BUFFER_SIZE - queueLen) < ucf_length) {
                     queueLen = BUFFER_SIZE;
                     num_chars_checked = queueLen - 2;
@@ -129,6 +125,7 @@ static void replaceUCF(void)
                     queueLen += ucf_length - 3;
                     num_chars_checked += ucf_length - 3;
                 }
+                printk(KERN_INFO "Chars checked after: %d\n\n", num_chars_checked);
 
                 // start at last index
                 // try to move each character forward by ucf_length
@@ -137,6 +134,10 @@ static void replaceUCF(void)
                     queue[k] = queue[(k + BUFFER_SIZE - (ucf_length - 3)) % BUFFER_SIZE];
                 }
             }
+
+            index = index_U;
+            j = 0;
+            first_loop = 1;
 
             while((first_loop || index != head) && j < ucf_length)
             {
