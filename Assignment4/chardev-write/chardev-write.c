@@ -123,7 +123,7 @@ static void replaceUCF(void)
                 }
                 else {
                     queueLen += ucf_length - 3;
-                    num_chars_checked += ucf_length - 3;
+                    num_chars_checked += ucf_length;
                 }
 
                 // start at last index
