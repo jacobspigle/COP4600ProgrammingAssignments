@@ -120,7 +120,7 @@ static void replaceUCF(void)
 
             while((first_loop || index != head) && j < ucf_length)
             {
-                printk(KERN_INFO "while loop (%d)\n", j);
+                printk(KERN_INFO "while loop (j = %d) (index = %d)\n", j, index);
                 first_loop = 0;
                 queue[index] = ucf_string[j];
                 queueLen++;
