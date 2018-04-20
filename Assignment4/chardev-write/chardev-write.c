@@ -125,14 +125,14 @@ static void replaceUCF(void)
                     queueLen = BUFFER_SIZE;
                 }
                 else {
-                    queueLen += ucf_length;
+                    queueLen += ucf_length - 3;
                 }
 
                 // start at last index
                 // try to move each character forward by ucf_length
                 // stop when we get to index_U + ucf_length
-                for(k=(head + BUFFER_SIZE + queueLen - 1) % BUFFER_SIZE; k != (index_U + BUFFER_SIZE + ucf_length - 4) % BUFFER_SIZE; k = (k + BUFFER_SIZE - 1) % BUFFER_SIZE) {
-                    queue[k] = queue[(k + BUFFER_SIZE - ucf_length) % BUFFER_SIZE];
+                for(k=(head + BUFFER_SIZE + queueLen - 1) % BUFFER_SIZE; k != (index_U + BUFFER_SIZE + ucf_length - 1) % BUFFER_SIZE; k = (k + BUFFER_SIZE - 1) % BUFFER_SIZE) {
+                    queue[k] = queue[(k + BUFFER_SIZE - (ucf_length - 3)) % BUFFER_SIZE];
                 }
             }
 
