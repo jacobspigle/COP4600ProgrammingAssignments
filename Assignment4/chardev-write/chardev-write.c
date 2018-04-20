@@ -97,8 +97,8 @@ static void replaceUCF(void)
     int first_loop;
     char temp;
     
-    printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
-    printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
+    // printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
+    // printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
 
     while(num_chars_checked < queueLen - 2)
     {
@@ -111,10 +111,10 @@ static void replaceUCF(void)
         }
 
         if(queue[index_U] == 'U' && queue[index_C] == 'C' && queue[index_F] == 'F') {
-            printk(KERN_INFO "\n\nFound UCF\n\n");
+            // printk(KERN_INFO "\n\nFound UCF\n\n");
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
-                printk(KERN_INFO "Chars checked before: %d, next 3: %c %c %c\n", num_chars_checked, queue[num_chars_checked], queue[(num_chars_checked+1)%BUFFER_SIZE], queue[(num_chars_checked+2)%BUFFER_SIZE]);
+                // printk(KERN_INFO "Chars checked before: %d, next 3: %c %c %c\n", num_chars_checked, queue[num_chars_checked], queue[(num_chars_checked+1)%BUFFER_SIZE], queue[(num_chars_checked+2)%BUFFER_SIZE]);
 
                 if((BUFFER_SIZE - queueLen) < ucf_length) {
                     queueLen = BUFFER_SIZE;
@@ -145,7 +145,7 @@ static void replaceUCF(void)
                 j++;
             }
 
-            printk(KERN_INFO "Chars checked after: %d, next 3: %c %c %c\n", num_chars_checked, queue[num_chars_checked], queue[(num_chars_checked+1)%BUFFER_SIZE], queue[(num_chars_checked+2)%BUFFER_SIZE]);
+            // printk(KERN_INFO "Chars checked after: %d, next 3: %c %c %c\n", num_chars_checked, queue[num_chars_checked], queue[(num_chars_checked+1)%BUFFER_SIZE], queue[(num_chars_checked+2)%BUFFER_SIZE]);
         }
         else {
             num_chars_checked++;
