@@ -121,6 +121,13 @@ static void replaceUCF(void)
             first_loop = 1;
 
             if(BUFFER_SIZE - queueLen >= ucf_length - 3) {
+                if((BUFFER_SIZE - queueLen) < ucf_length) {
+                    queueLen = BUFFER_SIZE;
+                }
+                else {
+                    queueLen += ucf_length;
+                }
+
                 // start at last index
                 // try to move each character forward by ucf_length
                 // stop when we get to index_U + ucf_length
@@ -133,7 +140,6 @@ static void replaceUCF(void)
             {
                 first_loop = 0;
                 queue[index] = ucf_string[j];
-                queueLen++;
                 index = (index + 1) % BUFFER_SIZE;
                 j++;
             }
