@@ -136,9 +136,6 @@ static void replaceUCF(void)
                 j++;
             }
         }
-        else {
-            printk(KERN_INFO "\n\nchars: %c %c %c\n\n", queue[index_U], queue[index_C], queue[index_F]);
-        }
     }
 
     num_chars_checked += ucf_chars_written;
