@@ -91,11 +91,10 @@ static int device_release(struct inode *inode, struct file *file){
 
 static void replaceUCF(void)
 {
-    int i, j, k;
+    int j, k;
     int index_U, index_C, index_F;
     int index;
     int first_loop;
-    char temp;
     
     // printk(KERN_INFO "replaceUCF Qlen is: %d\n", queueLen);
     // printk(KERN_INFO "Qlen-num_chars_checked is: %d\n", (queueLen - num_chars_checked));
